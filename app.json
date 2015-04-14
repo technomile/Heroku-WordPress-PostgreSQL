@@ -1,0 +1,5 @@
+{
+    "name": "TechnoMile LLC",
+    "description": "Deploying WordPress to Heroku using the Heroku Button",
+    "addons": ["heroku-postgresql:hobby-dev","newrelic:stark","sendgrid:starter"]
+}
