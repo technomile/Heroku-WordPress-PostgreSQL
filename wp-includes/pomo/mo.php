@@ -27,10 +27,6 @@ class MO extends Gettext_Translations {
 		return $this->import_from_reader($reader);
 	}
 
-	/**
-	 * @param string $filename
-	 * @return bool
-	 */
 	function export_to_file($filename) {
 		$fh = fopen($filename, 'wb');
 		if ( !$fh ) return false;
@@ -39,9 +35,6 @@ class MO extends Gettext_Translations {
 		return $res;
 	}
 
-	/**
-	 * @return string|false
-	 */
 	function export() {
 		$tmp_fh = fopen("php://temp", 'r+');
 		if ( !$tmp_fh ) return false;
@@ -50,10 +43,6 @@ class MO extends Gettext_Translations {
 		return stream_get_contents( $tmp_fh );
 	}
 
-	/**
-	 * @param Translation_Entry $entry
-	 * @return bool
-	 */
 	function is_entry_good_for_export( $entry ) {
 		if ( empty( $entry->translations ) ) {
 			return false;
@@ -66,10 +55,6 @@ class MO extends Gettext_Translations {
 		return true;
 	}
 
-	/**
-	 * @param resource $fh
-	 * @return true
-	 */
 	function export_to_file_handle($fh) {
 		$entries = array_filter( $this->entries, array( $this, 'is_entry_good_for_export' ) );
 		ksort($entries);
@@ -116,10 +101,6 @@ class MO extends Gettext_Translations {
 		return true;
 	}
 
-	/**
-	 * @param Translation_Entry $entry
-	 * @return string
-	 */
 	function export_original($entry) {
 		//TODO: warnings for control characters
 		$exported = $entry->singular;
@@ -128,18 +109,11 @@ class MO extends Gettext_Translations {
 		return $exported;
 	}
 
-	/**
-	 * @param Translation_Entry $entry
-	 * @return string
-	 */
 	function export_translations($entry) {
 		//TODO: warnings for control characters
 		return implode(chr(0), $entry->translations);
 	}
 
-	/**
-	 * @return string
-	 */
 	function export_headers() {
 		$exported = '';
 		foreach($this->headers as $header => $value) {
@@ -148,10 +122,6 @@ class MO extends Gettext_Translations {
 		return $exported;
 	}
 
-	/**
-	 * @param int $magic
-	 * @return string|false
-	 */
 	function get_byteorder($magic) {
 		// The magic is 0x950412de
 
@@ -284,17 +254,10 @@ class MO extends Gettext_Translations {
 		return $entry;
 	}
 
-	/**
-	 * @param int $count
-	 * @return string
-	 */
 	function select_plural_form($count) {
 		return $this->gettext_select_plural_form($count);
 	}
 
-	/**
-	 * @return int
-	 */
 	function get_plural_forms_count() {
 		return $this->_nplurals;
 	}

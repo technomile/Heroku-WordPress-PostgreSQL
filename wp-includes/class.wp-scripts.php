@@ -35,9 +35,6 @@ class WP_Scripts extends WP_Dependencies {
 		add_action( 'init', array( $this, 'init' ), 0 );
 	}
 
-	/**
-	 * @access public
-	 */
 	public function init() {
 		/**
 		 * Fires when the WP_Scripts instance is initialized.
@@ -64,24 +61,12 @@ class WP_Scripts extends WP_Dependencies {
 		return $this->do_items( $handles, $group );
 	}
 
-	/**
-	 * @deprecated 3.3
-	 * @see print_extra_script()
-	 *
-	 * @param string $handle
-	 * @param bool   $echo
-	 * @return bool|string|void
-	 */
+	// Deprecated since 3.3, see print_extra_script()
 	public function print_scripts_l10n( $handle, $echo = true ) {
 		_deprecated_function( __FUNCTION__, '3.3', 'print_extra_script()' );
 		return $this->print_extra_script( $handle, $echo );
 	}
 
-	/**
-	 * @param string $handle
-	 * @param bool   $echo
-	 * @return bool|string|void
-	 */
 	public function print_extra_script( $handle, $echo = true ) {
 		if ( !$output = $this->get_data( $handle, 'data' ) )
 			return;
@@ -98,11 +83,6 @@ class WP_Scripts extends WP_Dependencies {
 		return true;
 	}
 
-	/**
-	 * @param string   $handle Name of the item. Should be unique.
-	 * @param int|bool $group
-	 * @return bool True on success, false if not set.
-	 */
 	public function do_item( $handle, $group = false ) {
 		if ( !parent::do_item($handle) )
 			return false;
@@ -115,25 +95,15 @@ class WP_Scripts extends WP_Dependencies {
 		if ( false === $group && in_array($handle, $this->in_footer, true) )
 			$this->in_footer = array_diff( $this->in_footer, (array) $handle );
 
-		$obj = $this->registered[$handle];
-
-		if ( null === $obj->ver ) {
+		if ( null === $this->registered[$handle]->ver )
 			$ver = '';
-		} else {
-			$ver = $obj->ver ? $obj->ver : $this->default_version;
-		}
+		else
+			$ver = $this->registered[$handle]->ver ? $this->registered[$handle]->ver : $this->default_version;
 
 		if ( isset($this->args[$handle]) )
 			$ver = $ver ? $ver . '&amp;' . $this->args[$handle] : $this->args[$handle];
 
-		$src = $obj->src;
-		$cond_before = $cond_after = '';
-		$conditional = isset( $obj->extra['conditional'] ) ? $obj->extra['conditional'] : '';
-
-		if ( $conditional ) {
-			$cond_before = "<!--[if {$conditional}]>\n";
-			$cond_after = "<![endif]-->\n";
-		}
+		$src = $this->registered[$handle]->src;
 
 		if ( $this->do_concat ) {
 			/**
@@ -145,7 +115,7 @@ class WP_Scripts extends WP_Dependencies {
 			 * @param string $handle Script handle.
 			 */
 			$srce = apply_filters( 'script_loader_src', $src, $handle );
-			if ( $this->in_default_dir( $srce ) && ! $conditional ) {
+			if ( $this->in_default_dir($srce) ) {
 				$this->print_code .= $this->print_extra_script( $handle, false );
 				$this->concat .= "$handle,";
 				$this->concat_version .= "$handle$ver";
@@ -156,24 +126,13 @@ class WP_Scripts extends WP_Dependencies {
 			}
 		}
 
-		$has_conditional_data = $conditional && $this->get_data( $handle, 'data' );
-
-		if ( $has_conditional_data ) {
-			echo $cond_before;
-		}
-
 		$this->print_extra_script( $handle );
-
-		if ( $has_conditional_data ) {
-			echo $cond_after;
-		}
-
-		if ( ! preg_match( '|^(https?:)?//|', $src ) && ! ( $this->content_url && 0 === strpos( $src, $this->content_url ) ) ) {
+		if ( !preg_match('|^(https?:)?//|', $src) && ! ( $this->content_url && 0 === strpos($src, $this->content_url) ) ) {
 			$src = $this->base_url . $src;
 		}
 
-		if ( ! empty( $ver ) )
-			$src = add_query_arg( 'ver', $ver, $src );
+		if ( !empty($ver) )
+			$src = add_query_arg('ver', $ver, $src);
 
 		/** This filter is documented in wp-includes/class.wp-scripts.php */
 		$src = esc_url( apply_filters( 'script_loader_src', $src, $handle ) );
@@ -181,9 +140,9 @@ class WP_Scripts extends WP_Dependencies {
 		if ( ! $src )
 			return true;
 
-		$tag = "{$cond_before}<script type='text/javascript' src='$src'></script>\n{$cond_after}";
+		$tag = "<script type='text/javascript' src='$src'></script>\n";
 
-		/**
+		/** 
 		 * Filter the HTML script tag of an enqueued script.
 		 *
 		 * @since 4.1.0
@@ -204,12 +163,9 @@ class WP_Scripts extends WP_Dependencies {
 	}
 
 	/**
-	 * Localizes a script, only if the script has already been added
+	 * Localizes a script
 	 *
-	 * @param string $handle
-	 * @param string $object_name
-	 * @param array $l10n
-	 * @return bool
+	 * Localizes only if the script has already been added
 	 */
 	public function localize( $handle, $object_name, $l10n ) {
 		if ( $handle === 'jquery' )
@@ -240,13 +196,8 @@ class WP_Scripts extends WP_Dependencies {
 		return $this->add_data( $handle, 'data', $script );
 	}
 
-	/**
-	 * @param string $handle    Name of the item. Should be unique.
-	 * @param bool   $recursion Internal flag that calling function was called recursively.
-	 * @param mixed  $group     Group level.
-	 * @return bool Not already in the group or a lower group
-	 */
 	public function set_group( $handle, $recursion, $group = false ) {
+
 		if ( $this->registered[$handle]->args === 1 )
 			$grp = 1;
 		else
@@ -258,12 +209,6 @@ class WP_Scripts extends WP_Dependencies {
 		return parent::set_group( $handle, $recursion, $grp );
 	}
 
-	/**
-	 * @param mixed $handles   Item handle and argument (string) or item handles and arguments (array of strings).
-	 * @param bool  $recursion Internal flag that function is calling itself.
-	 * @param mixed $group     Group level: (int) level, (false) no groups.
-	 * @return bool True on success, false on failure.
-	 */
 	public function all_deps( $handles, $recursion = false, $group = false ) {
 		$r = parent::all_deps( $handles, $recursion );
 		if ( ! $recursion ) {
@@ -279,26 +224,16 @@ class WP_Scripts extends WP_Dependencies {
 		return $r;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function do_head_items() {
 		$this->do_items(false, 0);
 		return $this->done;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function do_footer_items() {
 		$this->do_items(false, 1);
 		return $this->done;
 	}
 
-	/**
-	 * @param string $src
-	 * @return bool
-	 */
 	public function in_default_dir( $src ) {
 		if ( ! $this->default_dirs ) {
 			return true;
@@ -316,9 +251,6 @@ class WP_Scripts extends WP_Dependencies {
 		return false;
 	}
 
-	/**
-	 * @access public
-	 */
 	public function reset() {
 		$this->do_concat = false;
 		$this->print_code = '';

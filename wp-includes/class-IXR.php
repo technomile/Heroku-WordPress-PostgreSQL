@@ -49,10 +49,7 @@ class IXR_Value {
     var $data;
     var $type;
 
-	/**
-	 * PHP5 constructor.
-	 */
-	function __construct( $data, $type = false )
+    function IXR_Value($data, $type = false)
     {
         $this->data = $data;
         if (!$type) {
@@ -71,13 +68,6 @@ class IXR_Value {
             }
         }
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Value( $data, $type = false ) {
-		self::__construct( $data, $type );
-	}
 
     function calculateType()
     {
@@ -162,7 +152,7 @@ class IXR_Value {
      * Checks whether or not the supplied array is a struct or not
      *
      * @param array $array
-     * @return bool
+     * @return boolean
      */
     function isStruct($array)
     {
@@ -204,20 +194,10 @@ class IXR_Message
     // The XML parser
     var $_parser;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $message )
+    function IXR_Message($message)
     {
         $this->message =& $message;
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Message( $message ) {
-		self::__construct( $message );
-	}
 
     function parse()
     {
@@ -406,10 +386,7 @@ class IXR_Server
     var $message;
     var $capabilities;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $callbacks = false, $data = false, $wait = false )
+    function IXR_Server($callbacks = false, $data = false, $wait = false)
     {
         $this->setCapabilities();
         if ($callbacks) {
@@ -421,22 +398,11 @@ class IXR_Server
         }
     }
 
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Server( $callbacks = false, $data = false, $wait = false ) {
-		self::__construct( $callbacks, $data, $wait );
-	}
-
     function serve($data = false)
     {
         if (!$data) {
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-                if ( function_exists( 'status_header' ) ) {
-                    status_header( 405 ); // WP #20986
-                    header( 'Allow: POST' );
-                }
-                header('Content-Type: text/plain'); // merged from WP #9093
+            	header('Content-Type: text/plain'); // merged from WP #9093
                 die('XML-RPC server accepts POST requests only.');
             }
 
@@ -630,10 +596,7 @@ class IXR_Request
     var $args;
     var $xml;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct($method, $args)
+    function IXR_Request($method, $args)
     {
         $this->method = $method;
         $this->args = $args;
@@ -652,13 +615,6 @@ EOD;
         }
         $this->xml .= '</params></methodCall>';
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Request( $method, $args ) {
-		self::__construct( $method, $args );
-	}
 
     function getLength()
     {
@@ -693,10 +649,7 @@ class IXR_Client
     // Storage place for an error message
     var $error = false;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $server, $path = false, $port = 80, $timeout = 15 )
+    function IXR_Client($server, $path = false, $port = 80, $timeout = 15)
     {
         if (!$path) {
             // Assume we have been given a URL instead
@@ -721,13 +674,6 @@ class IXR_Client
         $this->useragent = 'The Incutio XML-RPC PHP Library';
         $this->timeout = $timeout;
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Client( $server, $path = false, $port = 80, $timeout = 15 ) {
-		self::__construct( $server, $path, $port, $timeout );
-	}
 
     function query()
     {
@@ -848,21 +794,11 @@ class IXR_Error
     var $code;
     var $message;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $code, $message )
+    function IXR_Error($code, $message)
     {
         $this->code = $code;
         $this->message = htmlspecialchars($message);
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Error( $code, $message ) {
-		self::__construct( $code, $message );
-	}
 
     function getXml()
     {
@@ -904,10 +840,7 @@ class IXR_Date {
     var $second;
     var $timezone;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $time )
+    function IXR_Date($time)
     {
         // $time can be a PHP timestamp or an ISO one
         if (is_numeric($time)) {
@@ -916,13 +849,6 @@ class IXR_Date {
             $this->parseIso($time);
         }
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Date( $time ) {
-		self::__construct( $time );
-	}
 
     function parseTimestamp($timestamp)
     {
@@ -972,20 +898,10 @@ class IXR_Base64
 {
     var $data;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $data )
+    function IXR_Base64($data)
     {
         $this->data = $data;
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_Base64( $data ) {
-		self::__construct( $data );
-	}
 
     function getXml()
     {
@@ -1004,10 +920,7 @@ class IXR_IntrospectionServer extends IXR_Server
     var $signatures;
     var $help;
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct()
+    function IXR_IntrospectionServer()
     {
         $this->setCallbacks();
         $this->setCapabilities();
@@ -1040,13 +953,6 @@ class IXR_IntrospectionServer extends IXR_Server
             'Returns a documentation string for the specified method'
         );
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_IntrospectionServer() {
-		self::__construct();
-	}
 
     function addCallback($method, $callback, $args, $help)
     {
@@ -1176,21 +1082,11 @@ class IXR_ClientMulticall extends IXR_Client
 {
     var $calls = array();
 
-	/**
-	 * PHP5 constructor.
-	 */
-    function __construct( $server, $path = false, $port = 80 )
+    function IXR_ClientMulticall($server, $path = false, $port = 80)
     {
         parent::IXR_Client($server, $path, $port);
         $this->useragent = 'The Incutio XML-RPC PHP Library (multicall client)';
     }
-
-	/**
-	 * PHP4 constructor.
-	 */
-	public function IXR_ClientMulticall( $server, $path = false, $port = 80 ) {
-		self::__construct( $server, $path, $port );
-	}
 
     function addCall()
     {

@@ -111,9 +111,6 @@ class Translations {
 		return 1 == $count? 0 : 1;
 	}
 
-	/**
-	 * @return int
-	 */
 	function get_plural_forms_count() {
 		return 2;
 	}
@@ -149,9 +146,6 @@ class Translations {
 		}
 	}
 
-	/**
-	 * @param object $other
-	 */
 	function merge_originals_with(&$other) {
 		foreach( $other->entries as $entry ) {
 			if ( !isset( $this->entries[$entry->key()] ) )
@@ -284,33 +278,16 @@ class NOOP_Translations {
 		return true;
 	}
 
-	/**
-	 *
-	 * @param string $header
-	 * @param string $value
-	 */
 	function set_header($header, $value) {
 	}
 
-	/**
-	 *
-	 * @param array $headers
-	 */
 	function set_headers($headers) {
 	}
 
-	/**
-	 * @param string $header
-	 * @return false
-	 */
 	function get_header($header) {
 		return false;
 	}
 
-	/**
-	 * @param Translation_Entry $entry
-	 * @return false
-	 */
 	function translate_entry(&$entry) {
 		return false;
 	}
@@ -323,18 +300,10 @@ class NOOP_Translations {
 		return $singular;
 	}
 
-	/**
-	 *
-	 * @param int $count
-	 * @return bool
-	 */
 	function select_plural_form($count) {
 		return 1 == $count? 0 : 1;
 	}
 
-	/**
-	 * @return int
-	 */
 	function get_plural_forms_count() {
 		return 2;
 	}
@@ -349,9 +318,6 @@ class NOOP_Translations {
 			return 1 == $count? $singular : $plural;
 	}
 
-	/**
-	 * @param object $other
-	 */
 	function merge_with(&$other) {
 	}
 }

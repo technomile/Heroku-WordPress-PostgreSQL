@@ -21,9 +21,6 @@
  *
  * @since 1.5.0
  *
- * @global string $locale
- * @global string $wp_local_package
- *
  * @return string The locale of the blog or from the 'locale' hook.
  */
 function get_locale() {
@@ -116,7 +113,7 @@ function translate( $text, $domain = 'default' ) {
  */
 function before_last_bar( $string ) {
 	$last_bar = strrpos( $string, '|' );
-	if ( false === $last_bar )
+	if ( false == $last_bar )
 		return $string;
 	else
 		return substr( $string, 0, $last_bar );
@@ -434,8 +431,6 @@ function translate_nooped_plural( $nooped_plural, $count, $domain = 'default' ) 
  *
  * @since 1.5.0
  *
- * @global array $l10n
- *
  * @param string $domain Text domain. Unique identifier for retrieving translated strings.
  * @param string $mofile Path to the .mo file.
  * @return bool True on success, false on failure.
@@ -495,8 +490,6 @@ function load_textdomain( $domain, $mofile ) {
  * Unload translations for a text domain.
  *
  * @since 3.0.0
- *
- * @global array $l10n
  *
  * @param string $domain Text domain. Unique identifier for retrieving translated strings.
  * @return bool Whether textdomain was unloaded.
@@ -601,7 +594,7 @@ function load_plugin_textdomain( $domain, $deprecated = false, $plugin_rel_path 
 
 	if ( false !== $plugin_rel_path	) {
 		$path = WP_PLUGIN_DIR . '/' . trim( $plugin_rel_path, '/' );
-	} elseif ( false !== $deprecated ) {
+	} else if ( false !== $deprecated ) {
 		_deprecated_argument( __FUNCTION__, '2.7' );
 		$path = ABSPATH . trim( $deprecated, '/' );
 	} else {
@@ -711,8 +704,6 @@ function load_child_theme_textdomain( $domain, $path = false ) {
  *
  * @since 2.8.0
  *
- * @global array $l10n
- *
  * @param string $domain Text domain. Unique identifier for retrieving translated strings.
  * @return NOOP_Translations A Translations instance.
  */
@@ -728,8 +719,6 @@ function get_translations_for_domain( $domain ) {
  * Whether there are translations for the text domain.
  *
  * @since 3.0.0
- *
- * @global array $l10n
  *
  * @param string $domain Text domain. Unique identifier for retrieving translated strings.
  * @return bool Whether there are translations.
@@ -774,15 +763,11 @@ function translate_user_role( $name ) {
 function get_available_languages( $dir = null ) {
 	$languages = array();
 
-	$lang_files = glob( ( is_null( $dir) ? WP_LANG_DIR : $dir ) . '/*.mo' );
-	if ( $lang_files ) {
-		foreach( $lang_files as $lang_file ) {
-			$lang_file = basename( $lang_file, '.mo' );
-			if ( 0 !== strpos( $lang_file, 'continents-cities' ) && 0 !== strpos( $lang_file, 'ms-' ) &&
-				0 !== strpos( $lang_file, 'admin-' ) ) {
-				$languages[] = $lang_file;
-			}
-		}
+	foreach( (array)glob( ( is_null( $dir) ? WP_LANG_DIR : $dir ) . '/*.mo' ) as $lang_file ) {
+		$lang_file = basename($lang_file, '.mo');
+		if ( 0 !== strpos( $lang_file, 'continents-cities' ) && 0 !== strpos( $lang_file, 'ms-' ) &&
+			0 !== strpos( $lang_file, 'admin-' ))
+			$languages[] = $lang_file;
 	}
 
 	return $languages;
@@ -824,7 +809,7 @@ function wp_get_installed_translations( $type ) {
 		if ( substr( $file, -3 ) !== '.po' ) {
 			continue;
 		}
-		if ( ! preg_match( '/(?:(.+)-)?([a-z]{2,3}(?:_[A-Z]{2})?(?:_[a-z0-9]+)?).po/', $file, $match ) ) {
+		if ( ! preg_match( '/(?:(.+)-)?([A-Za-z_]{2,6}).po/', $file, $match ) ) {
 			continue;
 		}
 		if ( ! in_array( substr( $file, 0, -3 ) . '.mo', $files ) )  {
@@ -866,7 +851,6 @@ function wp_get_pomo_file_data( $po_file ) {
  * Language selector.
  *
  * @since 4.0.0
- * @since 4.3.0 Introduced the `echo` argument.
  *
  * @see get_available_languages()
  * @see wp_get_available_translations()
@@ -874,18 +858,15 @@ function wp_get_pomo_file_data( $po_file ) {
  * @param string|array $args {
  *     Optional. Array or string of arguments for outputting the language selector.
  *
- *     @type string   $id                           ID attribute of the select element. Default empty.
- *     @type string   $name                         Name attribute of the select element. Default empty.
- *     @type array    $languages                    List of installed languages, contain only the locales.
- *                                                  Default empty array.
- *     @type array    $translations                 List of available translations. Default result of
- *                                                  wp_get_available_translations().
- *     @type string   $selected                     Language which should be selected. Default empty.
- *     @type bool|int $echo                         Whether to echo or return the generated markup. Accepts 0, 1, or their
- *                                                  bool equivalents. Default 1.
- *     @type bool     $show_available_translations  Whether to show available translations. Default true.
+ *     @type string  $id                           ID attribute of the select element. Default empty.
+ *     @type string  $name                         Name attribute of the select element. Default empty.
+ *     @type array   $languages                    List of installed languages, contain only the locales.
+ *                                                 Default empty array.
+ *     @type array   $translations                 List of available translations. Default result of
+ *                                                 {@see wp_get_available_translations()}.
+ *     @type string  $selected                     Language which should be selected. Default empty.
+ *     @type bool    $show_available_translations  Whether to show available translations. Default true.
  * }
- * @return string HTML content only if 'echo' argument is 0.
  */
 function wp_dropdown_languages( $args = array() ) {
 
@@ -895,7 +876,6 @@ function wp_dropdown_languages( $args = array() ) {
 		'languages'    => array(),
 		'translations' => array(),
 		'selected'     => '',
-		'echo'         => 1,
 		'show_available_translations' => true,
 	) );
 
@@ -916,7 +896,7 @@ function wp_dropdown_languages( $args = array() ) {
 			$languages[] = array(
 				'language'    => $translation['language'],
 				'native_name' => $translation['native_name'],
-				'lang'        => current( $translation['iso'] ),
+				'lang'        => $translation['iso'][1],
 			);
 
 			// Remove installed language from available translations.
@@ -932,7 +912,7 @@ function wp_dropdown_languages( $args = array() ) {
 
 	$translations_available = ( ! empty( $translations ) && $args['show_available_translations'] );
 
-	$output = sprintf( '<select name="%s" id="%s">', esc_attr( $args['name'] ), esc_attr( $args['id'] ) );
+	printf( '<select name="%s" id="%s">', esc_attr( $args['name'] ), esc_attr( $args['id'] ) );
 
 	// Holds the HTML markup.
 	$structure = array();
@@ -962,7 +942,7 @@ function wp_dropdown_languages( $args = array() ) {
 			$structure[] = sprintf(
 				'<option value="%s" lang="%s"%s>%s</option>',
 				esc_attr( $translation['language'] ),
-				esc_attr( current( $translation['iso'] ) ),
+				esc_attr( $translation['iso'][1] ),
 				selected( $translation['language'], $args['selected'], false ),
 				esc_html( $translation['native_name'] )
 			);
@@ -970,13 +950,7 @@ function wp_dropdown_languages( $args = array() ) {
 		$structure[] = '</optgroup>';
 	}
 
-	$output .= join( "\n", $structure );
+	echo join( "\n", $structure );
 
-	$output .= '</select>';
-
-	if ( $args['echo'] ) {
-		echo $output;
-	}
-
-	return $output;
+	echo '</select>';
 }
