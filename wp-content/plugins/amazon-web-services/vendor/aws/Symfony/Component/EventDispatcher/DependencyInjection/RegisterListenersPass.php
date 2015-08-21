@@ -91,12 +91,8 @@ class RegisterListenersPass implements CompilerPassInterface
                 throw new \InvalidArgumentException(sprintf('The service "%s" must be public as event subscribers are lazy-loaded.', $id));
             }
 
-            if ($def->isAbstract()) {
-                throw new \InvalidArgumentException(sprintf('The service "%s" must not be abstract as event subscribers are lazy-loaded.', $id));
-            }
-
             // We must assume that the class value has been correctly filled, even if the service is created by a factory
-            $class = $container->getParameterBag()->resolveValue($def->getClass());
+            $class = $def->getClass();
 
             $refClass = new \ReflectionClass($class);
             $interface = 'Symfony\Component\EventDispatcher\EventSubscriberInterface';

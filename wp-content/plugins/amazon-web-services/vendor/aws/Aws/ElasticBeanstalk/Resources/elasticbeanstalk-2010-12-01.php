@@ -66,41 +66,6 @@ return array (
         ),
     ),
     'operations' => array(
-        'AbortEnvironmentUpdate' => array(
-            'httpMethod' => 'POST',
-            'uri' => '/',
-            'class' => 'Aws\\Common\\Command\\QueryCommand',
-            'responseClass' => 'EmptyOutput',
-            'responseType' => 'model',
-            'parameters' => array(
-                'Action' => array(
-                    'static' => true,
-                    'location' => 'aws.query',
-                    'default' => 'AbortEnvironmentUpdate',
-                ),
-                'Version' => array(
-                    'static' => true,
-                    'location' => 'aws.query',
-                    'default' => '2010-12-01',
-                ),
-                'EnvironmentId' => array(
-                    'type' => 'string',
-                    'location' => 'aws.query',
-                ),
-                'EnvironmentName' => array(
-                    'type' => 'string',
-                    'location' => 'aws.query',
-                    'minLength' => 4,
-                    'maxLength' => 23,
-                ),
-            ),
-            'errorResponses' => array(
-                array(
-                    'reason' => 'Unable to perform the specified operation because the user does not have enough privileges for one of more downstream aws services',
-                    'class' => 'InsufficientPrivilegesException',
-                ),
-            ),
-        ),
         'CheckDNSAvailability' => array(
             'httpMethod' => 'POST',
             'uri' => '/',
@@ -1459,11 +1424,6 @@ return array (
                     'minLength' => 1,
                     'maxLength' => 100,
                 ),
-                'SolutionStackName' => array(
-                    'type' => 'string',
-                    'location' => 'aws.query',
-                    'maxLength' => 100,
-                ),
                 'OptionSettings' => array(
                     'type' => 'array',
                     'location' => 'aws.query',
@@ -1576,10 +1536,6 @@ return array (
         ),
     ),
     'models' => array(
-        'EmptyOutput' => array(
-            'type' => 'object',
-            'additionalProperties' => true,
-        ),
         'CheckDNSAvailabilityResultMessage' => array(
             'type' => 'object',
             'additionalProperties' => true,
@@ -1782,10 +1738,6 @@ return array (
                     'type' => 'string',
                     'location' => 'xml',
                 ),
-                'AbortableOperationInProgress' => array(
-                    'type' => 'boolean',
-                    'location' => 'xml',
-                ),
                 'Health' => array(
                     'type' => 'string',
                     'location' => 'xml',
@@ -1849,6 +1801,10 @@ return array (
                     'location' => 'xml',
                 ),
             ),
+        ),
+        'EmptyOutput' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
         ),
         'ApplicationVersionDescriptionsMessage' => array(
             'type' => 'object',
@@ -2208,9 +2164,6 @@ return array (
                             ),
                             'Status' => array(
                                 'type' => 'string',
-                            ),
-                            'AbortableOperationInProgress' => array(
-                                'type' => 'boolean',
                             ),
                             'Health' => array(
                                 'type' => 'string',

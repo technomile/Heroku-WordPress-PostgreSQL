@@ -87,12 +87,12 @@ class ParallelTransfer extends AbstractTransfer
             }
 
             // Execute each command, iterate over the results, and add to the transfer state
-            /** @var \Guzzle\Service\Command\OperationCommand $command */
+            /** @var $command \Guzzle\Service\Command\OperationCommand */
             foreach ($this->client->execute($commands) as $command) {
                 $this->state->addPart(UploadPart::fromArray(array(
-                    'PartNumber'   => $command['PartNumber'],
+                    'PartNumber'   => count($this->state) + 1,
                     'ETag'         => $command->getResponse()->getEtag(),
-                    'Size'         => (int) $command->getRequest()->getBody()->getContentLength(),
+                    'Size'         => (int) $command->getResponse()->getContentLength(),
                     'LastModified' => gmdate(DateFormat::RFC2822)
                 )));
                 $eventData['command'] = $command;

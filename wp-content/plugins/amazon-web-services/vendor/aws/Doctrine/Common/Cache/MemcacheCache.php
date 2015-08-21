@@ -74,11 +74,7 @@ class MemcacheCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        $flags = null;
-        $this->memcache->get($id, $flags);
-        
-        //if memcache has changed the value of "flags", it means the value exists
-        return ($flags !== null);
+        return (bool) $this->memcache->get($id);
     }
 
     /**

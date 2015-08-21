@@ -40,12 +40,6 @@ class NativeMailerHandler extends MailHandler
     protected $headers = array();
 
     /**
-     * Optional parameters for the message
-     * @var array
-     */
-    protected $parameters = array();
-
-    /**
      * The wordwrap length for the message
      * @var integer
      */
@@ -84,7 +78,7 @@ class NativeMailerHandler extends MailHandler
      * Add headers to the message
      *
      * @param  string|array $headers Custom added headers
-     * @return self
+     * @return null
      */
     public function addHeader($headers)
     {
@@ -94,21 +88,6 @@ class NativeMailerHandler extends MailHandler
             }
             $this->headers[] = $header;
         }
-
-        return $this;
-    }
-
-    /**
-     * Add parameters to the message
-     *
-     * @param string|array $parameters Custom added parameters
-     * @return self
-     */
-    public function addParameter($parameters)
-    {
-        $this->parameters = array_merge($this->parameters, (array) $parameters);
-
-        return $this;
     }
 
     /**
@@ -123,7 +102,7 @@ class NativeMailerHandler extends MailHandler
             $headers .= 'MIME-Version: 1.0' . "\r\n";
         }
         foreach ($this->to as $to) {
-            mail($to, $this->subject, $content, $headers, implode(' ', $this->parameters));
+            mail($to, $this->subject, $content, $headers);
         }
     }
 
@@ -150,10 +129,6 @@ class NativeMailerHandler extends MailHandler
      */
     public function setContentType($contentType)
     {
-        if (strpos($contentType, "\n") !== false || strpos($contentType, "\r") !== false) {
-            throw new \InvalidArgumentException('The content type can not contain newline characters to prevent email header injection');
-        }
-
         $this->contentType = $contentType;
 
         return $this;
@@ -165,10 +140,6 @@ class NativeMailerHandler extends MailHandler
      */
     public function setEncoding($encoding)
     {
-        if (strpos($encoding, "\n") !== false || strpos($encoding, "\r") !== false) {
-            throw new \InvalidArgumentException('The encoding can not contain newline characters to prevent email header injection');
-        }
-
         $this->encoding = $encoding;
 
         return $this;

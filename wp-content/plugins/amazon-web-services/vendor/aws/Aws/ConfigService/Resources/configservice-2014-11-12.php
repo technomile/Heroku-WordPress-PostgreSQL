@@ -827,12 +827,4 @@ return array (
             ),
         ),
     ),
-    'iterators' => array(
-        'GetResourceConfigHistory' => array(
-            'input_token' => 'nextToken',
-            'output_token' => 'nextToken',
-            'limit_key' => 'limit',
-            'result_key' => 'configurationItems',
-        ),
-    ),
 );

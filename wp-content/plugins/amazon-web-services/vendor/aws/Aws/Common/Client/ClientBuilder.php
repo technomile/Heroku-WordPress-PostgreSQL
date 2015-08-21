@@ -89,12 +89,6 @@ class ClientBuilder
      */
     protected $iteratorsConfig = array();
 
-    /** @var string */
-    private $clientClass;
-
-    /** @var string */
-    private $serviceName;
-
     /**
      * Factory method for creating the client builder
      *
@@ -115,14 +109,6 @@ class ClientBuilder
     public function __construct($namespace = null)
     {
         $this->clientNamespace = $namespace;
-
-        // Determine service and class name
-        $this->clientClass = 'Aws\Common\Client\DefaultClient';
-
-        if ($this->clientNamespace) {
-            $this->serviceName = substr($this->clientNamespace, strrpos($this->clientNamespace, '\\') + 1);
-            $this->clientClass = $this->clientNamespace . '\\' . $this->serviceName . 'Client';
-        }
     }
 
     /**
@@ -213,10 +199,6 @@ class ClientBuilder
             (self::$commonConfigRequirements + $this->configRequirements)
         );
 
-        if ($config[Options::VERSION] === 'latest') {
-            $config[Options::VERSION] = constant("{$this->clientClass}::LATEST_API_VERSION");
-        }
-
         if (!isset($config['endpoint_provider'])) {
             $config['endpoint_provider'] = RulesEndpointProvider::fromDefaults();
         }
@@ -225,7 +207,6 @@ class ClientBuilder
         $description = $this->updateConfigFromDescription($config);
         $signature = $this->getSignature($description, $config);
         $credentials = $this->getCredentials($config);
-        $this->extractHttpConfig($config);
 
         // Resolve exception parser
         if (!$this->exceptionParser) {
@@ -235,7 +216,24 @@ class ClientBuilder
         // Resolve backoff strategy
         $backoff = $config->get(Options::BACKOFF);
         if ($backoff === null) {
-            $backoff = $this->createDefaultBackoff();
+            $backoff = new BackoffPlugin(
+                // Retry failed requests up to 3 times if it is determined that the request can be retried
+                new TruncatedBackoffStrategy(3,
+                    // Retry failed requests with 400-level responses due to throttling
+                    new ThrottlingErrorChecker($this->exceptionParser,
+                        // Retry failed requests due to transient network or cURL problems
+                        new CurlBackoffStrategy(null,
+                            // Retry failed requests with 500-level responses
+                            new HttpBackoffStrategy(array(500, 503, 509),
+                                // Retry requests that failed due to expired credentials
+                                new ExpiredCredentialsChecker($this->exceptionParser,
+                                    new ExponentialBackoffStrategy()
+                                )
+                            )
+                        )
+                    )
+                )
+            );
             $config->set(Options::BACKOFF, $backoff);
         }
 
@@ -243,8 +241,15 @@ class ClientBuilder
             $this->addBackoffLogger($backoff, $config);
         }
 
-        /** @var AwsClientInterface $client */
-        $client = new $this->clientClass($credentials, $signature, $config);
+        // Determine service and class name
+        $clientClass = 'Aws\Common\Client\DefaultClient';
+        if ($this->clientNamespace) {
+            $serviceName = substr($this->clientNamespace, strrpos($this->clientNamespace, '\\') + 1);
+            $clientClass = $this->clientNamespace . '\\' . $serviceName . 'Client';
+        }
+
+        /** @var $client AwsClientInterface */
+        $client = new $clientClass($credentials, $signature, $config);
         $client->setDescription($description);
 
         // Add exception marshaling so that more descriptive exception are thrown
@@ -252,7 +257,7 @@ class ClientBuilder
             $exceptionFactory = new NamespaceExceptionFactory(
                 $this->exceptionParser,
                 "{$this->clientNamespace}\\Exception",
-                "{$this->clientNamespace}\\Exception\\{$this->serviceName}Exception"
+                "{$this->clientNamespace}\\Exception\\{$serviceName}Exception"
             );
             $client->addSubscriber(new ExceptionListener($exceptionFactory));
         }
@@ -364,8 +369,37 @@ class ClientBuilder
             $this->setIteratorsConfig($iterators);
         }
 
-        $this->handleRegion($config);
-        $this->handleEndpoint($config);
+        // Make sure a valid region is set
+        $region = $config->get(Options::REGION);
+        $global = $description->getData('globalEndpoint');
+
+        if (!$global && !$region) {
+            throw new InvalidArgumentException(
+                'A region is required when using ' . $description->getData('serviceFullName')
+            );
+        } elseif ($global && !$region) {
+            $region = 'us-east-1';
+            $config->set(Options::REGION, 'us-east-1');
+        }
+
+        if (!$config->get(Options::BASE_URL)) {
+            $endpoint = call_user_func(
+                $config->get('endpoint_provider'),
+                array(
+                    'scheme'  => $config->get(Options::SCHEME),
+                    'region'  => $region,
+                    'service' => $config->get(Options::SERVICE)
+                )
+            );
+            $config->set(Options::BASE_URL, $endpoint['endpoint']);
+
+            // Set a signature if one was not explicitly provided.
+            if (!$config->hasKey(Options::SIGNATURE)
+                && isset($endpoint['signatureVersion'])
+            ) {
+                $config->set(Options::SIGNATURE, $endpoint['signatureVersion']);
+            }
+        }
 
         return $description;
     }
@@ -422,105 +456,12 @@ class ClientBuilder
     protected function getCredentials(Collection $config)
     {
         $credentials = $config->get(Options::CREDENTIALS);
-
-        if (is_array($credentials)) {
-            $credentials = Credentials::factory($credentials);
-        } elseif ($credentials === false) {
+        if ($credentials === false) {
             $credentials = new NullCredentials();
         } elseif (!$credentials instanceof CredentialsInterface) {
             $credentials = Credentials::factory($config);
         }
 
         return $credentials;
-    }
-
-    private function handleRegion(Collection $config)
-    {
-        // Make sure a valid region is set
-        $region = $config[Options::REGION];
-        $description = $config[Options::SERVICE_DESCRIPTION];
-        $global = $description->getData('globalEndpoint');
-
-        if (!$global && !$region) {
-            throw new InvalidArgumentException(
-                'A region is required when using ' . $description->getData('serviceFullName')
-            );
-        } elseif ($global && !$region) {
-            $config[Options::REGION] = 'us-east-1';
-        }
-    }
-
-    private function handleEndpoint(Collection $config)
-    {
-        // Alias "endpoint" with "base_url" for forwards compatibility.
-        if ($config['endpoint']) {
-            $config[Options::BASE_URL] = $config['endpoint'];
-            return;
-        }
-
-        if ($config[Options::BASE_URL]) {
-            return;
-        }
-
-        $endpoint = call_user_func(
-            $config['endpoint_provider'],
-            array(
-                'scheme'  => $config[Options::SCHEME],
-                'region'  => $config[Options::REGION],
-                'service' => $config[Options::SERVICE]
-            )
-        );
-
-        $config[Options::BASE_URL] = $endpoint['endpoint'];
-
-        // Set a signature if one was not explicitly provided.
-        if (!$config->hasKey(Options::SIGNATURE)
-            && isset($endpoint['signatureVersion'])
-        ) {
-            $config->set(Options::SIGNATURE, $endpoint['signatureVersion']);
-        }
-
-        // The the signing region if endpoint rule specifies one.
-        if (isset($endpoint['credentialScope'])) {
-            $scope = $endpoint['credentialScope'];
-            if (isset($scope['region'])) {
-                $config->set(Options::SIGNATURE_REGION, $scope['region']);
-            }
-        }
-    }
-
-    private function createDefaultBackoff()
-    {
-        return new BackoffPlugin(
-            // Retry failed requests up to 3 times if it is determined that the request can be retried
-            new TruncatedBackoffStrategy(3,
-                // Retry failed requests with 400-level responses due to throttling
-                new ThrottlingErrorChecker($this->exceptionParser,
-                    // Retry failed requests due to transient network or cURL problems
-                    new CurlBackoffStrategy(null,
-                        // Retry failed requests with 500-level responses
-                        new HttpBackoffStrategy(array(500, 503, 509),
-                            // Retry requests that failed due to expired credentials
-                            new ExpiredCredentialsChecker($this->exceptionParser,
-                                new ExponentialBackoffStrategy()
-                            )
-                        )
-                    )
-                )
-            )
-        );
-    }
-
-    private function extractHttpConfig(Collection $config)
-    {
-        $http = $config['http'];
-
-        if (!is_array($http)) {
-            return;
-        }
-
-        if (isset($http['verify'])) {
-            $config[Options::SSL_CERT] = $http['verify'];
-        }
     }
 }

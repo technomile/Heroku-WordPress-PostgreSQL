@@ -29,24 +29,23 @@ class PhpFileCache extends FileCache
 {
     const EXTENSION = '.doctrinecache.php';
 
-    /**
+     /**
      * {@inheritdoc}
      */
-    public function __construct($directory, $extension = self::EXTENSION)
-    {
-        parent::__construct($directory, $extension);
-    }
+    protected $extension = self::EXTENSION;
 
     /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        $value = $this->includeFileForId($id);
+        $filename = $this->getFilename($id);
 
-        if (! $value) {
+        if ( ! is_file($filename)) {
             return false;
         }
+
+        $value = include $filename;
 
         if ($value['lifetime'] !== 0 && $value['lifetime'] < time()) {
             return false;
@@ -60,11 +59,13 @@ class PhpFileCache extends FileCache
      */
     protected function doContains($id)
     {
-        $value = $this->includeFileForId($id);
+        $filename = $this->getFilename($id);
 
-        if (! $value) {
+        if ( ! is_file($filename)) {
             return false;
         }
+
+        $value = include $filename;
 
         return $value['lifetime'] === 0 || $value['lifetime'] > time();
     }
@@ -86,7 +87,12 @@ class PhpFileCache extends FileCache
             );
         }
 
-        $filename  = $this->getFilename($id);
+        $filename   = $this->getFilename($id);
+        $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
+
+        if ( ! is_dir($filepath)) {
+            mkdir($filepath, 0777, true);
+        }
 
         $value = array(
             'lifetime'  => $lifeTime,
@@ -96,25 +102,6 @@ class PhpFileCache extends FileCache
         $value  = var_export($value, true);
         $code   = sprintf('<?php return %s;', $value);
 
-        return $this->writeFile($filename, $code);
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return array|false
-     */
-    private function includeFileForId($id)
-    {
-        $fileName = $this->getFilename($id);
-
-        // note: error suppression is still faster than `file_exists`, `is_file` and `is_readable`
-        $value = @include $fileName;
-
-        if (! isset($value['lifetime'])) {
-            return false;
-        }
-
-        return $value;
+        return file_put_contents($filename, $code) !== false;
     }
 }

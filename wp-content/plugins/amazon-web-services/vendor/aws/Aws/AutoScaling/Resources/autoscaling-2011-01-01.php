@@ -355,23 +355,6 @@ return array (
                         'type' => 'string',
                     ),
                 ),
-                'ClassicLinkVPCId' => array(
-                    'type' => 'string',
-                    'location' => 'aws.query',
-                    'minLength' => 1,
-                    'maxLength' => 255,
-                ),
-                'ClassicLinkVPCSecurityGroups' => array(
-                    'type' => 'array',
-                    'location' => 'aws.query',
-                    'sentAs' => 'ClassicLinkVPCSecurityGroups.member',
-                    'items' => array(
-                        'name' => 'XmlStringMaxLen255',
-                        'type' => 'string',
-                        'minLength' => 1,
-                        'maxLength' => 255,
-                    ),
-                ),
                 'UserData' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
@@ -431,7 +414,7 @@ return array (
                                     'VolumeSize' => array(
                                         'type' => 'numeric',
                                         'minimum' => 1,
-                                        'maximum' => 16384,
+                                        'maximum' => 1024,
                                     ),
                                     'VolumeType' => array(
                                         'type' => 'string',
@@ -445,7 +428,7 @@ return array (
                                     'Iops' => array(
                                         'type' => 'numeric',
                                         'minimum' => 100,
-                                        'maximum' => 30000,
+                                        'maximum' => 4000,
                                     ),
                                 ),
                             ),
@@ -2521,17 +2504,6 @@ return array (
                                 'type' => 'array',
                                 'items' => array(
                                     'name' => 'XmlString',
-                                    'type' => 'string',
-                                    'sentAs' => 'member',
-                                ),
-                            ),
-                            'ClassicLinkVPCId' => array(
-                                'type' => 'string',
-                            ),
-                            'ClassicLinkVPCSecurityGroups' => array(
-                                'type' => 'array',
-                                'items' => array(
-                                    'name' => 'XmlStringMaxLen255',
                                     'type' => 'string',
                                     'sentAs' => 'member',
                                 ),

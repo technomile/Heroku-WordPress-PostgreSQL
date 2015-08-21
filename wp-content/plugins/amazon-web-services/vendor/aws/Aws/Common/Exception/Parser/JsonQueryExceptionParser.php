@@ -29,10 +29,8 @@ class JsonQueryExceptionParser extends AbstractJsonExceptionParser
     protected function doParse(array $data, Response $response)
     {
         if ($json = $data['parsed']) {
-            if (isset($json['__type'])) {
-                $parts = explode('#', $json['__type']);
-                $data['code'] = isset($parts[1]) ? $parts[1] : $parts[0];
-            }
+            $parts = explode('#', $json['__type']);
+            $data['code'] = isset($parts[1]) ? $parts[1] : $parts[0];
             $data['message'] = isset($json['message']) ? $json['message'] : null;
         }
 

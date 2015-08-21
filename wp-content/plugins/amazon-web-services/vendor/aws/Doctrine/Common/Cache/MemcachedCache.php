@@ -72,14 +72,6 @@ class MemcachedCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetchMultiple(array $keys)
-    {
-        return $this->memcached->getMulti($keys);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function doContains($id)
     {
         return (false !== $this->memcached->get($id));

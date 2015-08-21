@@ -17,7 +17,6 @@
 namespace Aws\Common\Signature;
 
 use Aws\Common\Credentials\CredentialsInterface;
-use Aws\Common\Credentials\NullCredentials;
 use Guzzle\Common\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -76,8 +75,6 @@ class SignatureListener implements EventSubscriberInterface
      */
     public function onRequestBeforeSend(Event $event)
     {
-        if(!$this->credentials instanceof NullCredentials) {
-            $this->signature->signRequest($event['request'], $this->credentials);
-        }
+        $this->signature->signRequest($event['request'], $this->credentials);
     }
 }

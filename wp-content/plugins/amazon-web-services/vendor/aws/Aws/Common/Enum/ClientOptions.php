@@ -24,29 +24,17 @@ use Aws\Common\Enum;
 class ClientOptions extends Enum
 {
     /**
-     * AWS Access Key ID
-     *
-     * @deprecated Use "credentials" instead.
+     * @var string AWS Access Key ID
      */
     const KEY = 'key';
 
     /**
-     * AWS secret access key
-     *
-     * @deprecated Use "credentials" instead.
+     * @var string AWS secret access key
      */
     const SECRET = 'secret';
 
     /**
-     * Custom AWS security token to use with request authentication.
-     *
-     * @deprecated Use "credentials" instead.
-     */
-    const TOKEN = 'token';
-
-    /**
-     * Provide an array of "key", "secret", and "token" or an instance of
-     * `Aws\Common\Credentials\CredentialsInterface`.
+     * @var string You can optionally provide a custom `Aws\Common\Credentials\CredentialsInterface` object
      */
     const CREDENTIALS = 'credentials';
 
@@ -54,6 +42,11 @@ class ClientOptions extends Enum
      * @var string Name of a credential profile to read from your ~/.aws/credentials file
      */
     const PROFILE = 'profile';
+
+    /**
+     * @var string Custom AWS security token to use with request authentication
+     */
+    const TOKEN = 'token';
 
     /**
      * @var string UNIX timestamp for when the custom credentials expire
@@ -93,10 +86,7 @@ class ClientOptions extends Enum
     const SERVICE = 'service';
 
     /**
-     * Instead of using a `region` and `scheme`, you can specify a custom base
-     * URL for the client.
-     *
-     * @deprecated Use the "endpoint" option instead.
+     * @var string Instead of using a `region` and `scheme`, you can specify a custom base URL for the client
      */
     const BASE_URL = 'base_url';
 
@@ -133,10 +123,9 @@ class ClientOptions extends Enum
     const BACKOFF_LOGGER_TEMPLATE = 'client.backoff.logger.template';
 
     /**
-     * Set to true to use the bundled CA cert or pass the full path to an SSL
-     * certificate bundle. This option should be modified when you encounter
-     * curl error code 60. Set to "system" to use the cacert bundle on your
-     * system.
+     * @var string Set to true to use the bundled CA cert or pass the full path to an SSL certificate bundle. This
+     *             option should be modified when you encounter curl error code 60. Set to "system" to use the cacert
+     *             bundle on your system.
      */
     const SSL_CERT = 'ssl.certificate_authority';
 

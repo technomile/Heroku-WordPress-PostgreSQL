@@ -20,7 +20,6 @@ class ImmutableEventDispatcher implements EventDispatcherInterface
 {
     /**
      * The proxied dispatcher.
-     *
      * @var EventDispatcherInterface
      */
     private $dispatcher;

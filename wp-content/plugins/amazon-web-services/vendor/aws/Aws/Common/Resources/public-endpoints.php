@@ -19,34 +19,19 @@ return array(
             'endpoint' => 's3-{region}.amazonaws.com'
         ),
         '*/cloudfront' => array(
-            'endpoint' => 'cloudfront.amazonaws.com',
-            'credentialScope' => array(
-                'region' => 'us-east-1'
-            )
+            'endpoint' => 'cloudfront.amazonaws.com'
         ),
         '*/iam' => array(
-            'endpoint' => 'iam.amazonaws.com',
-            'credentialScope' => array(
-                'region' => 'us-east-1'
-            )
+            'endpoint' => 'iam.amazonaws.com'
         ),
         '*/importexport' => array(
-            'endpoint' => 'importexport.amazonaws.com',
-            'credentialScope' => array(
-                'region' => 'us-east-1'
-            )
+            'endpoint' => 'importexport.amazonaws.com'
         ),
         '*/route53' => array(
-            'endpoint' => 'route53.amazonaws.com',
-            'credentialScope' => array(
-                'region' => 'us-east-1'
-            )
+            'endpoint' => 'route53.amazonaws.com'
         ),
         '*/sts' => array(
-            'endpoint' => 'sts.amazonaws.com',
-            'credentialScope' => array(
-                'region' => 'us-east-1'
-            )
+            'endpoint' => 'sts.amazonaws.com'
         ),
         'us-east-1/sdb' => array(
             'endpoint' => 'sdb.amazonaws.com'

@@ -62,10 +62,6 @@ class FingersCrossedHandler extends AbstractHandler
         $this->bubble = $bubble;
         $this->stopBuffering = $stopBuffering;
         $this->passthruLevel = $passthruLevel;
-
-        if (!$this->handler instanceof HandlerInterface && !is_callable($this->handler)) {
-            throw new \RuntimeException("The given handler (".json_encode($this->handler).") is not a callable nor a Monolog\Handler\HandlerInterface object");
-        }
     }
 
     /**
@@ -97,6 +93,9 @@ class FingersCrossedHandler extends AbstractHandler
                     $this->buffering = false;
                 }
                 if (!$this->handler instanceof HandlerInterface) {
+                    if (!is_callable($this->handler)) {
+                        throw new \RuntimeException("The given handler (".json_encode($this->handler).") is not a callable nor a Monolog\Handler\HandlerInterface object");
+                    }
                     $this->handler = call_user_func($this->handler, $record, $this);
                     if (!$this->handler instanceof HandlerInterface) {
                         throw new \RuntimeException("The factory callable should return a HandlerInterface");

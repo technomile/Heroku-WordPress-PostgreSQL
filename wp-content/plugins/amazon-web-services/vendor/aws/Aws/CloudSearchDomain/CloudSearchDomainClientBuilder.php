@@ -5,11 +5,13 @@ namespace Aws\CloudSearchDomain;
 use Aws\Common\Client\ClientBuilder;
 use Aws\Common\Client\ThrottlingErrorChecker;
 use Aws\Common\Client\UserAgentListener;
+use Aws\Common\Credentials\Credentials;
 use Aws\Common\Enum\ClientOptions as Options;
 use Aws\Common\Exception\ExceptionListener;
 use Aws\Common\Exception\InvalidArgumentException;
 use Aws\Common\Exception\NamespaceExceptionFactory;
 use Aws\Common\Exception\Parser\JsonQueryExceptionParser;
+use Aws\Common\Signature\SignatureV4;
 use Guzzle\Common\Collection;
 use Guzzle\Http\Url;
 use Guzzle\Plugin\Backoff\BackoffPlugin;
@@ -39,21 +41,18 @@ class CloudSearchDomainClientBuilder extends ClientBuilder
             $this->configRequirements
         );
 
-        $endpoint = $config['endpoint'] ?: $config[Options::BASE_URL];
-
-        // Make sure endpoint is correctly set
-        if (!$endpoint) {
+        // Make sure base_url is correctly set
+        if (!($baseUrl = $config->get(Options::BASE_URL))) {
             throw new InvalidArgumentException('You must provide the endpoint for the CloudSearch domain.');
-        }
-
-        if (strpos($endpoint, 'http') !== 0) {
-            $endpoint = $config[Options::SCHEME] . '://' . $endpoint;
-            $config['endpoint'] = $endpoint;
-            $config[Options::BASE_URL] = $endpoint;
+        } elseif (strpos($baseUrl, 'http') !== 0) {
+            $config->set(Options::BASE_URL, Url::buildUrl(array(
+                'scheme' => $config->get(Options::SCHEME),
+                'host'   => $baseUrl,
+            )));
         }
 
         // Determine the region from the endpoint
-        $endpoint = Url::factory($endpoint);
+        $endpoint = Url::factory($config->get(Options::BASE_URL));
         list(,$region) = explode('.', $endpoint->getHost());
         $config[Options::REGION] = $config[Options::SIGNATURE_REGION] = $region;
 
@@ -77,7 +76,7 @@ class CloudSearchDomainClientBuilder extends ClientBuilder
                         // Retry failed requests due to transient network or cURL problems
                         new CurlBackoffStrategy(null,
                             // Retry failed requests with 500-level responses
-                            new HttpBackoffStrategy(array(500, 503, 504, 509),
+                            new HttpBackoffStrategy(array(500, 503, 509),
                                 new ExponentialBackoffStrategy()
                             )
                         )

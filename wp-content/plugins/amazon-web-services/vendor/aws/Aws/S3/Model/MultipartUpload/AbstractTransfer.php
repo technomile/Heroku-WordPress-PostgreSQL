@@ -70,7 +70,7 @@ abstract class AbstractTransfer extends CommonAbstractTransfer
      */
     protected function complete()
     {
-        /** @var UploadPart $part */
+        /** @var $part UploadPart  */
         $parts = array();
         foreach ($this->state as $part) {
             $parts[] = array(
@@ -95,7 +95,7 @@ abstract class AbstractTransfer extends CommonAbstractTransfer
         $params = $this->state->getUploadId()->toParams();
         $params[Ua::OPTION] = Ua::MULTIPART_UPLOAD;
 
-        /** @var OperationCommand $command */
+        /** @var $command OperationCommand */
         $command = $this->client->getCommand('AbortMultipartUpload', $params);
 
         return $command;

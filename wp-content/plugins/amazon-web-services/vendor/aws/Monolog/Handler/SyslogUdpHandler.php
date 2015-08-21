@@ -63,11 +63,11 @@ class SyslogUdpHandler extends AbstractSyslogHandler
     /**
      * Make common syslog header (see rfc5424)
      */
-    protected function makeCommonSyslogHeader($severity)
+    private function makeCommonSyslogHeader($severity)
     {
         $priority = $severity + $this->facility;
 
-        return "<$priority>1 ";
+        return "<$priority>: ";
     }
 
     /**

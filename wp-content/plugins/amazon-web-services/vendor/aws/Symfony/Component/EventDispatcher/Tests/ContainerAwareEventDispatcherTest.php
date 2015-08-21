@@ -17,15 +17,8 @@ use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ContainerAwareEventDispatcherTest extends AbstractEventDispatcherTest
+class ContainerAwareEventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
-    protected function createEventDispatcher()
-    {
-        $container = new Container();
-
-        return new ContainerAwareEventDispatcher($container);
-    }
-
     public function testAddAListenerService()
     {
         $event = new Event();
@@ -239,6 +232,8 @@ class SubscriberService implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
+            'onEvent' => 'onEvent',
+            'onEvent' => array('onEvent', 10),
             'onEvent' => array('onEvent'),
         );
     }

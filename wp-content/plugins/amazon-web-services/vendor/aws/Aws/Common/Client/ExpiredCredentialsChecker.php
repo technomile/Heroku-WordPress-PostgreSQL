@@ -63,7 +63,7 @@ class ExpiredCredentialsChecker extends AbstractBackoffStrategy
                 return null;
             }
 
-            /** @var AwsClientInterface $client */
+            /** @var $client AwsClientInterface */
             $client = $request->getClient();
             // Only retry if the credentials can be refreshed
             if (!($client->getCredentials() instanceof AbstractRefreshableCredentials)) {

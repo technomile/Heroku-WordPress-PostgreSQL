@@ -10,7 +10,7 @@ return array (
     'namespace' => 'CloudSearchDomain',
     'operations' => array(
         'Search' => array(
-            'httpMethod' => 'GET',
+            'httpMethod' => 'POST',
             'uri' => '/2013-01-01/search?format=sdk&pretty=true',
             'class' => 'Guzzle\\Service\\Command\\OperationCommand',
             'responseClass' => 'SearchResponse',
@@ -189,12 +189,6 @@ return array (
                                                 'name' => 'String',
                                                 'type' => 'string',
                                             ),
-                                        ),
-                                    ),
-                                    'exprs' => array(
-                                        'type' => 'object',
-                                        'additionalProperties' => array(
-                                            'type' => 'string',
                                         ),
                                     ),
                                     'highlights' => array(

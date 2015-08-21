@@ -39,7 +39,7 @@ class JobManifestListener implements EventSubscriberInterface
      */
     public function onCommandBeforePrepare(Event $event)
     {
-        /** @var \Guzzle\Service\Command\AbstractCommand $command */
+        /** @var $command \Guzzle\Service\Command\AbstractCommand */
         $command = $event['command'];
         if ($command->getName() === 'CreateJob') {
             $manifest = $command->get('Manifest');

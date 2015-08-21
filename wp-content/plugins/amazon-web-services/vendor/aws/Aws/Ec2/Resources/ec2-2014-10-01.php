@@ -4325,14 +4325,6 @@ return array (
                         ),
                     ),
                 ),
-                'NextToken' => array(
-                    'type' => 'string',
-                    'location' => 'aws.query',
-                ),
-                'MaxResults' => array(
-                    'type' => 'numeric',
-                    'location' => 'aws.query',
-                ),
             ),
         ),
         'DescribeSpotDatafeedSubscription' => array(
@@ -13269,11 +13261,6 @@ return array (
                         ),
                     ),
                 ),
-                'NextToken' => array(
-                    'type' => 'string',
-                    'location' => 'xml',
-                    'sentAs' => 'nextToken',
-                ),
             ),
         ),
         'DescribeSpotDatafeedSubscriptionResult' => array(
@@ -16107,9 +16094,6 @@ return array (
             'result_key' => 'InstanceStatuses',
         ),
         'DescribeInstances' => array(
-            'input_token' => 'NextToken',
-            'output_token' => 'NextToken',
-            'limit_key' => 'MaxResults',
             'result_key' => 'Reservations',
         ),
         'DescribeInternetGateways' => array(
@@ -16149,9 +16133,6 @@ return array (
             'result_key' => 'SecurityGroups',
         ),
         'DescribeSnapshots' => array(
-            'input_token' => 'NextToken',
-            'output_token' => 'NextToken',
-            'limit_key' => 'MaxResults',
             'result_key' => 'Snapshots',
         ),
         'DescribeSpotInstanceRequests' => array(

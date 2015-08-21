@@ -281,4 +281,5 @@ class SocketHandler extends AbstractProcessingHandler
             throw new \RuntimeException("End-of-file reached, probably we got disconnected (sent $sent of $length)");
         }
     }
+
 }

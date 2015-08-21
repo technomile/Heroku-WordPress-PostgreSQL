@@ -23,6 +23,13 @@ return array (
     'targetPrefix' => 'AWSCognitoIdentityService.',
     'signatureVersion' => 'v4',
     'namespace' => 'CognitoIdentity',
+    'regions' => array(
+        'us-east-1' => array(
+            'http' => false,
+            'https' => true,
+            'hostname' => 'cognito-identity.us-east-1.amazonaws.com',
+        ),
+    ),
     'operations' => array(
         'CreateIdentityPool' => array(
             'httpMethod' => 'POST',
@@ -81,7 +88,7 @@ return array (
                     'type' => 'array',
                     'location' => 'json',
                     'items' => array(
-                        'name' => 'ARNString',
+                        'name' => 'OIDCProviderARN',
                         'type' => 'string',
                         'minLength' => 20,
                         'maxLength' => 2048,
@@ -167,58 +174,6 @@ return array (
                 ),
             ),
         ),
-        'DescribeIdentity' => array(
-            'httpMethod' => 'POST',
-            'uri' => '/',
-            'class' => 'Aws\\Common\\Command\\JsonCommand',
-            'responseClass' => 'IdentityDescription',
-            'responseType' => 'model',
-            'parameters' => array(
-                'Content-Type' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'application/x-amz-json-1.1',
-                ),
-                'command.expects' => array(
-                    'static' => true,
-                    'default' => 'application/json',
-                ),
-                'X-Amz-Target' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'AWSCognitoIdentityService.DescribeIdentity',
-                ),
-                'IdentityId' => array(
-                    'required' => true,
-                    'type' => 'string',
-                    'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 50,
-                ),
-            ),
-            'errorResponses' => array(
-                array(
-                    'reason' => 'Thrown for missing or bad input parameter(s).',
-                    'class' => 'InvalidParameterException',
-                ),
-                array(
-                    'reason' => 'Thrown when the requested resource (for example, a dataset or record) does not exist.',
-                    'class' => 'ResourceNotFoundException',
-                ),
-                array(
-                    'reason' => 'Thrown when a user is not authorized to access the requested resource.',
-                    'class' => 'NotAuthorizedException',
-                ),
-                array(
-                    'reason' => 'Thrown when a request is throttled.',
-                    'class' => 'TooManyRequestsException',
-                ),
-                array(
-                    'reason' => 'Thrown when the service encounters an error during processing the request.',
-                    'class' => 'InternalErrorException',
-                ),
-            ),
-        ),
         'DescribeIdentityPool' => array(
             'httpMethod' => 'POST',
             'uri' => '/',
@@ -271,79 +226,6 @@ return array (
                 ),
             ),
         ),
-        'GetCredentialsForIdentity' => array(
-            'httpMethod' => 'POST',
-            'uri' => '/',
-            'class' => 'Aws\\Common\\Command\\JsonCommand',
-            'responseClass' => 'GetCredentialsForIdentityResponse',
-            'responseType' => 'model',
-            'parameters' => array(
-                'Content-Type' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'application/x-amz-json-1.1',
-                ),
-                'command.expects' => array(
-                    'static' => true,
-                    'default' => 'application/json',
-                ),
-                'X-Amz-Target' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'AWSCognitoIdentityService.GetCredentialsForIdentity',
-                ),
-                'IdentityId' => array(
-                    'required' => true,
-                    'type' => 'string',
-                    'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 50,
-                ),
-                'Logins' => array(
-                    'type' => 'object',
-                    'location' => 'json',
-                    'additionalProperties' => array(
-                        'type' => 'string',
-                        'minLength' => 1,
-                        'maxLength' => 2048,
-                        'data' => array(
-                            'shape_name' => 'IdentityProviderName',
-                            'key_pattern' => '/[\\w._-]+/',
-                        ),
-                    ),
-                ),
-            ),
-            'errorResponses' => array(
-                array(
-                    'reason' => 'Thrown for missing or bad input parameter(s).',
-                    'class' => 'InvalidParameterException',
-                ),
-                array(
-                    'reason' => 'Thrown when the requested resource (for example, a dataset or record) does not exist.',
-                    'class' => 'ResourceNotFoundException',
-                ),
-                array(
-                    'reason' => 'Thrown when a user is not authorized to access the requested resource.',
-                    'class' => 'NotAuthorizedException',
-                ),
-                array(
-                    'reason' => 'Thrown when a user tries to use a login which is already linked to another account.',
-                    'class' => 'ResourceConflictException',
-                ),
-                array(
-                    'reason' => 'Thrown when a request is throttled.',
-                    'class' => 'TooManyRequestsException',
-                ),
-                array(
-                    'reason' => 'Thrown if the identity pool has no role associated for the given auth type (auth/unauth) or if the AssumeRole fails.',
-                    'class' => 'InvalidIdentityPoolConfigurationException',
-                ),
-                array(
-                    'reason' => 'Thrown when the service encounters an error during processing the request.',
-                    'class' => 'InternalErrorException',
-                ),
-            ),
-        ),
         'GetId' => array(
             'httpMethod' => 'POST',
             'uri' => '/',
@@ -366,6 +248,7 @@ return array (
                     'default' => 'AWSCognitoIdentityService.GetId',
                 ),
                 'AccountId' => array(
+                    'required' => true,
                     'type' => 'string',
                     'location' => 'json',
                     'minLength' => 1,
@@ -420,61 +303,6 @@ return array (
                 array(
                     'reason' => 'Thrown when the total number of user pools has exceeded a preset limit.',
                     'class' => 'LimitExceededException',
-                ),
-            ),
-        ),
-        'GetIdentityPoolRoles' => array(
-            'httpMethod' => 'POST',
-            'uri' => '/',
-            'class' => 'Aws\\Common\\Command\\JsonCommand',
-            'responseClass' => 'GetIdentityPoolRolesResponse',
-            'responseType' => 'model',
-            'parameters' => array(
-                'Content-Type' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'application/x-amz-json-1.1',
-                ),
-                'command.expects' => array(
-                    'static' => true,
-                    'default' => 'application/json',
-                ),
-                'X-Amz-Target' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'AWSCognitoIdentityService.GetIdentityPoolRoles',
-                ),
-                'IdentityPoolId' => array(
-                    'type' => 'string',
-                    'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 50,
-                ),
-            ),
-            'errorResponses' => array(
-                array(
-                    'reason' => 'Thrown for missing or bad input parameter(s).',
-                    'class' => 'InvalidParameterException',
-                ),
-                array(
-                    'reason' => 'Thrown when the requested resource (for example, a dataset or record) does not exist.',
-                    'class' => 'ResourceNotFoundException',
-                ),
-                array(
-                    'reason' => 'Thrown when a user is not authorized to access the requested resource.',
-                    'class' => 'NotAuthorizedException',
-                ),
-                array(
-                    'reason' => 'Thrown when a user tries to use a login which is already linked to another account.',
-                    'class' => 'ResourceConflictException',
-                ),
-                array(
-                    'reason' => 'Thrown when a request is throttled.',
-                    'class' => 'TooManyRequestsException',
-                ),
-                array(
-                    'reason' => 'Thrown when the service encounters an error during processing the request.',
-                    'class' => 'InternalErrorException',
                 ),
             ),
         ),
@@ -787,8 +615,6 @@ return array (
                 'DeveloperUserIdentifier' => array(
                     'type' => 'string',
                     'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
                 'MaxResults' => array(
                     'type' => 'numeric',
@@ -854,15 +680,11 @@ return array (
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
                 'DestinationUserIdentifier' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
                 'DeveloperProviderName' => array(
                     'required' => true,
@@ -877,76 +699,6 @@ return array (
                     'location' => 'json',
                     'minLength' => 1,
                     'maxLength' => 50,
-                ),
-            ),
-            'errorResponses' => array(
-                array(
-                    'reason' => 'Thrown for missing or bad input parameter(s).',
-                    'class' => 'InvalidParameterException',
-                ),
-                array(
-                    'reason' => 'Thrown when the requested resource (for example, a dataset or record) does not exist.',
-                    'class' => 'ResourceNotFoundException',
-                ),
-                array(
-                    'reason' => 'Thrown when a user is not authorized to access the requested resource.',
-                    'class' => 'NotAuthorizedException',
-                ),
-                array(
-                    'reason' => 'Thrown when a user tries to use a login which is already linked to another account.',
-                    'class' => 'ResourceConflictException',
-                ),
-                array(
-                    'reason' => 'Thrown when a request is throttled.',
-                    'class' => 'TooManyRequestsException',
-                ),
-                array(
-                    'reason' => 'Thrown when the service encounters an error during processing the request.',
-                    'class' => 'InternalErrorException',
-                ),
-            ),
-        ),
-        'SetIdentityPoolRoles' => array(
-            'httpMethod' => 'POST',
-            'uri' => '/',
-            'class' => 'Aws\\Common\\Command\\JsonCommand',
-            'responseClass' => 'EmptyOutput',
-            'responseType' => 'model',
-            'parameters' => array(
-                'Content-Type' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'application/x-amz-json-1.1',
-                ),
-                'command.expects' => array(
-                    'static' => true,
-                    'default' => 'application/json',
-                ),
-                'X-Amz-Target' => array(
-                    'static' => true,
-                    'location' => 'header',
-                    'default' => 'AWSCognitoIdentityService.SetIdentityPoolRoles',
-                ),
-                'IdentityPoolId' => array(
-                    'required' => true,
-                    'type' => 'string',
-                    'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 50,
-                ),
-                'Roles' => array(
-                    'required' => true,
-                    'type' => 'object',
-                    'location' => 'json',
-                    'additionalProperties' => array(
-                        'type' => 'string',
-                        'minLength' => 20,
-                        'maxLength' => 2048,
-                        'data' => array(
-                            'shape_name' => 'RoleType',
-                            'key_pattern' => '/(un)?authenticated/',
-                        ),
-                    ),
                 ),
             ),
             'errorResponses' => array(
@@ -1022,8 +774,6 @@ return array (
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
-                    'minLength' => 1,
-                    'maxLength' => 1024,
                 ),
             ),
             'errorResponses' => array(
@@ -1198,7 +948,7 @@ return array (
                     'type' => 'array',
                     'location' => 'json',
                     'items' => array(
-                        'name' => 'ARNString',
+                        'name' => 'OIDCProviderARN',
                         'type' => 'string',
                         'minLength' => 20,
                         'maxLength' => 2048,
@@ -1265,7 +1015,7 @@ return array (
                     'type' => 'array',
                     'location' => 'json',
                     'items' => array(
-                        'name' => 'ARNString',
+                        'name' => 'OIDCProviderARN',
                         'type' => 'string',
                     ),
                 ),
@@ -1275,60 +1025,6 @@ return array (
             'type' => 'object',
             'additionalProperties' => true,
         ),
-        'IdentityDescription' => array(
-            'type' => 'object',
-            'additionalProperties' => true,
-            'properties' => array(
-                'IdentityId' => array(
-                    'type' => 'string',
-                    'location' => 'json',
-                ),
-                'Logins' => array(
-                    'type' => 'array',
-                    'location' => 'json',
-                    'items' => array(
-                        'name' => 'IdentityProviderName',
-                        'type' => 'string',
-                    ),
-                ),
-                'CreationDate' => array(
-                    'type' => 'string',
-                    'location' => 'json',
-                ),
-                'LastModifiedDate' => array(
-                    'type' => 'string',
-                    'location' => 'json',
-                ),
-            ),
-        ),
-        'GetCredentialsForIdentityResponse' => array(
-            'type' => 'object',
-            'additionalProperties' => true,
-            'properties' => array(
-                'IdentityId' => array(
-                    'type' => 'string',
-                    'location' => 'json',
-                ),
-                'Credentials' => array(
-                    'type' => 'object',
-                    'location' => 'json',
-                    'properties' => array(
-                        'AccessKeyId' => array(
-                            'type' => 'string',
-                        ),
-                        'SecretKey' => array(
-                            'type' => 'string',
-                        ),
-                        'SessionToken' => array(
-                            'type' => 'string',
-                        ),
-                        'Expiration' => array(
-                            'type' => 'string',
-                        ),
-                    ),
-                ),
-            ),
-        ),
         'GetIdResponse' => array(
             'type' => 'object',
             'additionalProperties' => true,
@@ -1336,23 +1032,6 @@ return array (
                 'IdentityId' => array(
                     'type' => 'string',
                     'location' => 'json',
-                ),
-            ),
-        ),
-        'GetIdentityPoolRolesResponse' => array(
-            'type' => 'object',
-            'additionalProperties' => true,
-            'properties' => array(
-                'IdentityPoolId' => array(
-                    'type' => 'string',
-                    'location' => 'json',
-                ),
-                'Roles' => array(
-                    'type' => 'object',
-                    'location' => 'json',
-                    'additionalProperties' => array(
-                        'type' => 'string',
-                    ),
                 ),
             ),
         ),
@@ -1408,12 +1087,6 @@ return array (
                                     'name' => 'IdentityProviderName',
                                     'type' => 'string',
                                 ),
-                            ),
-                            'CreationDate' => array(
-                                'type' => 'string',
-                            ),
-                            'LastModifiedDate' => array(
-                                'type' => 'string',
                             ),
                         ),
                     ),
