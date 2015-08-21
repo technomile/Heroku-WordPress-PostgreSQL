@@ -11,7 +11,7 @@
  *
  * @since 2.0.0
  *
- * @return int|WP_Error WP_Error or User ID.
+ * @return null|WP_Error|int Null when adding user, WP_Error or User ID integer when no parameters.
  */
 function add_user() {
 	return edit_user();
@@ -25,10 +25,10 @@ function add_user() {
  * @since 2.0.0
  *
  * @param int $user_id Optional. User ID.
- * @return int|WP_Error user id of the updated user
+ * @return int user id of the updated user
  */
 function edit_user( $user_id = 0 ) {
-	$wp_roles = wp_roles();
+	global $wp_roles;
 	$user = new stdClass;
 	if ( $user_id ) {
 		$update = true;
@@ -176,7 +176,7 @@ function edit_user( $user_id = 0 ) {
 		$user_id = wp_update_user( $user );
 	} else {
 		$user_id = wp_insert_user( $user );
-		wp_new_user_notification( $user_id, 'both' );
+		wp_new_user_notification( $user_id, isset( $_POST['send_password'] ) ? wp_unslash( $pass1 ) : '' );
 	}
 	return $user_id;
 }
@@ -198,7 +198,9 @@ function edit_user( $user_id = 0 ) {
  * @return array
  */
 function get_editable_roles() {
-	$all_roles = wp_roles()->roles;
+	global $wp_roles;
+
+	$all_roles = $wp_roles->roles;
 
 	/**
 	 * Filter the list of editable roles.
@@ -234,8 +236,6 @@ function get_user_to_edit( $user_id ) {
  *
  * @since 2.0.0
  *
- * @global wpdb $wpdb
- *
  * @param int $user_id User ID.
  * @return array
  */
@@ -257,14 +257,12 @@ function get_users_drafts( $user_id ) {
 /**
  * Remove user and optionally reassign posts and links to another user.
  *
- * If the $reassign parameter is not assigned to a User ID, then all posts will
+ * If the $reassign parameter is not assigned to an User ID, then all posts will
  * be deleted of that user. The action 'delete_user' that is passed the User ID
  * being deleted will be run after the posts are either reassigned or deleted.
  * The user meta will also be deleted that are for that User ID.
  *
  * @since 2.0.0
- *
- * @global wpdb $wpdb
  *
  * @param int $id User ID.
  * @param int $reassign Optional. Reassign posts and links to new User ID.
@@ -386,12 +384,9 @@ function wp_revoke_user($id) {
 	$user->remove_all_caps();
 }
 
+add_action('admin_init', 'default_password_nag_handler');
 /**
  * @since 2.8.0
- *
- * @global int $user_ID
- *
- * @param false $errors Deprecated.
  */
 function default_password_nag_handler($errors = false) {
 	global $user_ID;
@@ -406,11 +401,10 @@ function default_password_nag_handler($errors = false) {
 	}
 }
 
+add_action('profile_update', 'default_password_nag_edit_user', 10, 2);
+
 /**
  * @since 2.8.0
- *
- * @param int    $user_ID
- * @param object $old_data
  */
 function default_password_nag_edit_user($user_ID, $old_data) {
 	// Short-circuit it.
@@ -426,10 +420,10 @@ function default_password_nag_edit_user($user_ID, $old_data) {
 	}
 }
 
+add_action('admin_notices', 'default_password_nag');
+
 /**
  * @since 2.8.0
- *
- * @global string $pagenow
  */
 function default_password_nag() {
 	global $pagenow;
@@ -440,7 +434,7 @@ function default_password_nag() {
 	echo '<div class="error default-password-nag">';
 	echo '<p>';
 	echo '<strong>' . __('Notice:') . '</strong> ';
-	_e('You&rsquo;re using the auto-generated password for your account. Would you like to change it?');
+	_e('You&rsquo;re using the auto-generated password for your account. Would you like to change it to something easier to remember?');
 	echo '</p><p>';
 	printf( '<a href="%s">' . __('Yes, take me to my profile page') . '</a> | ', get_edit_profile_url() . '#password' );
 	printf( '<a href="%s" id="default-password-nag-no">' . __('No thanks, do not remind me again') . '</a>', '?default_password_nag=0' );

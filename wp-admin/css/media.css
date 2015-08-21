@@ -177,7 +177,7 @@
 	margin-top: -22px;
 	-webkit-border-radius: 22px;
 	border-radius: 22px;
-	background-color: #0073aa;
+	background-color: #0074a2;
 	-webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
 	box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
 }
@@ -274,8 +274,9 @@
 
 .find-box-search .spinner {
 	float: none;
-	left: 105px;
+	left: 110px;
 	position: absolute;
+	top: 2px;
 }
 
 .find-box-search,
@@ -311,7 +312,7 @@
 }
 
 #find-posts-close:hover {
-	color: #00a0d2;
+	color: #2ea2cc;
 }
 
 #find-posts-close:before {
@@ -389,7 +390,7 @@ form.upgrade .hint {
 }
 
 .drag-drop #drag-drop-area {
-	border: 4px dashed #b4b9be;
+	border: 4px dashed #bbb;
 	height: 200px;
 }
 
@@ -399,7 +400,7 @@ form.upgrade .hint {
 }
 
 .drag-drop-inside p {
-	color: #a0a5aa;
+	color: #aaa;
 	font-size: 14px;
 	margin: 5px 0;
 	display: none;
@@ -459,10 +460,8 @@ border color while dragging a file over the uploader drop area */
 	width: auto;
 	margin-bottom: 16px;
 	padding: 0 16px;
-	border-left: 4px solid #dd3d36;
- 	-webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
- 	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
-	background-color: #fff;
+	border: 1px solid #c00;
+	background-color: #feebe8;
 }
 
 .upload-php .mode-grid .hide-sidebar .media-sidebar {
@@ -476,30 +475,27 @@ border color while dragging a file over the uploader drop area */
 }
 
 .upload-php .mode-grid .media-sidebar .upload-error {
-	margin: 12px 0;
-	padding: 4px 0 0;
+	margin: 20px 0;
+	padding: 0;
 	border: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
 	background: none;
 }
 
 .upload-php .mode-grid .media-sidebar .media-uploader-status .upload-dismiss-errors {
-	top: -10px;
-	right: -14px;
-	padding: 10px;
+	font-size: 0;
+	top: -12px;
+	right: -10px;
 }
 
 .upload-php .mode-grid .media-sidebar .media-uploader-status .upload-dismiss-errors:before {
-	content: "\f153";
-	display: block;
-	font: normal 16px/1 dashicons;
-	color: #bbb;
+	content: "\f158";
+	font: normal 20px/1 dashicons;
+	color: #666;
 }
 
 .upload-php .mode-grid .media-sidebar .media-uploader-status .upload-dismiss-errors:focus:before,
 .upload-php .mode-grid .media-sidebar .media-uploader-status .upload-dismiss-errors:hover:before {
-	color: #c00;
+	color: #2ea2cc;
 }
 
 .upload-php .mode-grid .media-sidebar .media-uploader-status.errors h3 {
@@ -514,7 +510,7 @@ border color while dragging a file over the uploader drop area */
 	bottom: auto;
 	padding-top: 0;
 	margin-top: 0;
-	border: 4px dashed #b4b9be;
+	border: 4px dashed #bbb;
 }
 
 .media-frame.mode-select .attachments-browser.fixed .attachments {
@@ -571,9 +567,9 @@ border color while dragging a file over the uploader drop area */
 	font-size: 14px;
 }
 
-.media-frame.mode-grid.mode-edit .media-toolbar-secondary > .select-mode-toggle-button {
-	margin: 0 8px 0 0;
-	vertical-align: middle;
+.media-frame.mode-grid .media-toolbar-secondary > .media-button {
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .media-frame.mode-grid .attachments-browser .bulk-select {
@@ -586,7 +582,7 @@ border color while dragging a file over the uploader drop area */
 }
 
 .media-frame.mode-grid .spinner {
-	margin-top: 16px;
+	margin-top: 15px;
 }
 
 .attachments-browser .media-toolbar-secondary > .media-button {
@@ -635,6 +631,11 @@ border color while dragging a file over the uploader drop area */
 .upload-php .media-modal-close .media-modal-icon:before {
 	content: '\f335';
 	font-size: 22px;
+}
+
+.upload-php .media-modal-close .media-modal-icon {
+	margin: 14px;
+	width: 22px;
 }
 
 .upload-php .media-modal-close,
@@ -689,8 +690,6 @@ border color while dragging a file over the uploader drop area */
 	border-color: #ccc;
 	color: #000;
 	outline: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
 }
 
 .upload-php .media-modal-close:focus .media-modal-icon:before,
@@ -912,6 +911,8 @@ border color while dragging a file over the uploader drop area */
 .wp_attachment_image .spinner,
 .A1B1 .spinner {
 	float: left;
+	padding: 0 0 4px 0;
+	vertical-align: bottom;
 }
 
 .imgedit-menu {
@@ -943,7 +944,7 @@ border color while dragging a file over the uploader drop area */
 .imgedit-menu div:hover {
 	border-color: #c1c1c1;
 	background-color: #eaeaea;
-	color: #32373c;
+	color: #333;
 }
 
 .imgedit-menu div.disabled {
@@ -1019,6 +1020,10 @@ border color while dragging a file over the uploader drop area */
 	margin: 0 8px 0 0;
 }
 
+.imgedit-group-top {
+	margin: 5px 0;
+}
+
 #poststuff .imgedit-group-top h3 {
 	padding: 0;
 }
@@ -1046,7 +1051,7 @@ a.imgedit-help-toggle {
 }
 
 .imgedit-submit {
-	margin: 8px 0 0;
+	margin: 8px 0;
 }
 
 .imgedit-submit-btn {
@@ -1067,7 +1072,7 @@ span.imgedit-scale-warn {
 
 .imgedit-group {
 	margin-bottom: 8px;
-	padding: 10px;
+	padding: 2px 10px;
 }
 
 audio, video {
@@ -1087,6 +1092,7 @@ audio, video {
  * HiDPI Displays
  */
 @media print,
+  (-o-min-device-pixel-ratio: 5/4),
   (-webkit-min-device-pixel-ratio: 1.25),
   (min-resolution: 120dpi) {
 	.imgedit-wait {

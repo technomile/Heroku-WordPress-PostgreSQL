@@ -24,10 +24,11 @@ class WP_Filesystem_Base {
 	/**
 	 * Cached list of local filepaths to mapped remote filepaths.
 	 *
+	 * @access private
 	 * @since 2.7.0
 	 * @var array
 	 */
-	public $cache = array();
+	private $cache = array();
 
 	/**
 	 * The Access method of the current connection, Set automatically.
@@ -38,9 +39,57 @@ class WP_Filesystem_Base {
 	 */
 	public $method = '';
 
-	public $errors = null;
+	/**
+	 * Make private properties readable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to get.
+	 * @return mixed Property.
+	 */
+	public function __get( $name ) {
+		return $this->$name;
+	}
 
-	public $options = array();
+	/**
+	 * Make private properties settable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name  Property to set.
+	 * @param mixed  $value Property value.
+	 * @return mixed Newly-set property.
+	 */
+	public function __set( $name, $value ) {
+		return $this->$name = $value;
+	}
+
+	/**
+	 * Make private properties checkable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to check if set.
+	 * @return bool Whether the property is set.
+	 */
+	public function __isset( $name ) {
+		return isset( $this->$name );
+	}
+
+	/**
+	 * Make private properties un-settable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to unset.
+	 */
+	public function __unset( $name ) {
+		unset( $this->$name );
+	}
 
 	/**
 	 * Return the path on the remote filesystem of ABSPATH.
@@ -168,9 +217,10 @@ class WP_Filesystem_Base {
 	 * @since 2.7.0
 	 *
 	 * @param string $folder the folder to locate.
-	 * @return string|false The location of the remote path, false on failure.
+	 * @return string The location of the remote path.
 	 */
 	public function find_folder( $folder ) {
+
 		if ( isset( $this->cache[ $folder ] ) )
 			return $this->cache[ $folder ];
 
@@ -230,12 +280,13 @@ class WP_Filesystem_Base {
 	 *
 	 * Expects Windows sanitized path.
 	 *
+	 * @access private
 	 * @since 2.7.0
 	 *
 	 * @param string $folder The folder to locate.
 	 * @param string $base   The folder to start searching from.
 	 * @param bool   $loop   If the function has recursed, Internal use only.
-	 * @return string|false The location of the remote path, false to cease looping.
+	 * @return string The location of the remote path.
 	 */
 	public function search_for_folder( $folder, $base = '.', $loop = false ) {
 		if ( empty( $base ) || '.' == $base )
@@ -310,7 +361,7 @@ class WP_Filesystem_Base {
 	 * @return string The *nix-style representation of permissions.
 	 */
 	public function gethchmod( $file ){
-		$perms = intval( $this->getchmod( $file ), 8 );
+		$perms = $this->getchmod($file);
 		if (($perms & 0xC000) == 0xC000) // Socket
 			$info = 's';
 		elseif (($perms & 0xA000) == 0xA000) // Symbolic Link
@@ -352,17 +403,6 @@ class WP_Filesystem_Base {
 	}
 
 	/**
-	 * Gets the permissions of the specified file or filepath in their octal format
-	 *
-	 * @since 2.5.0
-	 * @param string $file
-	 * @return string the last 3 characters of the octal number
-	 */
-	public function getchmod( $file ) {
-		return '777';
-	}
-
-	/**
 	 * Convert *nix-style file permissions to a octal number.
 	 *
 	 * Converts '-rw-r--r--' to 0644
@@ -381,11 +421,9 @@ class WP_Filesystem_Base {
 		$legal =  array('', 'w', 'r', 'x', '-');
 		$attarray = preg_split('//', $mode);
 
-		for ( $i = 0, $c = count( $attarray ); $i < $c; $i++ ) {
-		   if ($key = array_search($attarray[$i], $legal)) {
+		for ($i=0; $i < count($attarray); $i++)
+		   if ($key = array_search($attarray[$i], $legal))
 			   $realmode .= $legal[$key];
-		   }
-		}
 
 		$mode = str_pad($realmode, 10, '-', STR_PAD_LEFT);
 		$trans = array('-'=>'0', 'r'=>'4', 'w'=>'2', 'x'=>'1');
@@ -401,6 +439,7 @@ class WP_Filesystem_Base {
 	/**
 	 * Determine if the string provided contains binary characters.
 	 *
+	 * @access private
 	 * @since 2.7.0
 	 *
 	 * @param string $text String to test against.
@@ -492,7 +531,7 @@ class WP_Filesystem_Base {
 	 * @since 2.5.0
 	 * @abstract
 	 * @param string $dir The new current directory.
-	 * @return bool|string
+	 * @return bool Returns true on success or false on failure.
 	 */
 	public function chdir( $dir ) {
 		return false;
@@ -506,7 +545,7 @@ class WP_Filesystem_Base {
 	 * @param string $file      Path to the file.
 	 * @param mixed  $group     A group name or number.
 	 * @param bool   $recursive Optional. If set True changes file group recursively. Defaults to False.
-	 * @return bool|string
+	 * @return bool Returns true on success or false on failure.
 	 */
 	public function chgrp( $file, $group, $recursive = false ) {
 		return false;
@@ -520,7 +559,7 @@ class WP_Filesystem_Base {
 	 * @param string $file      Path to the file.
 	 * @param int    $mode      Optional. The permissions as octal number, usually 0644 for files, 0755 for dirs.
 	 * @param bool   $recursive Optional. If set True changes file group recursively. Defaults to False.
-	 * @return bool|string
+	 * @return bool Returns true on success or false on failure.
 	 */
 	public function chmod( $file, $mode = false, $recursive = false ) {
 		return false;

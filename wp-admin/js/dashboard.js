@@ -124,7 +124,7 @@ jQuery(document).ready( function($) {
 	};
 	quickPressLoad();
 
-	$( '.meta-box-sortables' ).sortable( 'option', 'containment', '#wpwrap' );
+	$( '.meta-box-sortables' ).sortable( 'option', 'containment', 'document' );
 
 	function autoResizeTextarea() {
 		if ( document.documentMode && document.documentMode < 9 ) {

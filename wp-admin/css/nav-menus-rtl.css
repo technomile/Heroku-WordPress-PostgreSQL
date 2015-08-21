@@ -101,6 +101,10 @@ ul.add-menu-item-tabs li {
 	margin-top: 1px;
 }
 
+.menu-edit p {
+	margin: .3em 0 .6em;
+}
+
 .menu-edit #post-body-content h3 {
 	margin: 1em 0 10px;
 }
@@ -212,16 +216,8 @@ ul.add-menu-item-tabs li {
 	margin-top: -2px;
 }
 
-.widefat .menu-locations tr + tr td {
-	padding-top: 0;
-}
-
-.widefat .menu-locations td {
-	vertical-align: middle;
-}
-
-.menu-location-title label {
-	font-weight: bold;
+.widefat td.menu-location-menus {
+	padding-bottom: 5px;
 }
 
 .menu-location-menus select {
@@ -263,7 +259,7 @@ ul.add-menu-item-tabs li {
 }
 
 .js .input-with-default-title {
-	color: #a0a5aa;
+	color: #aaa;
 	font-style: italic;
 }
 
@@ -349,6 +345,11 @@ ul.add-menu-item-tabs li {
 	float: left;
 }
 
+.postbox .spinner {
+	display: none;
+	vertical-align: middle;
+}
+
 .button-controls {
 	clear:both;
 	margin: 10px 0;
@@ -401,11 +402,6 @@ ul.add-menu-item-tabs li {
 /* Menu item types */
 .quick-search {
 	width: 190px;
-}
-
-.quick-search-wrap .spinner {
-	float: none;
-	margin: 0 5px;
 }
 
 .nav-menus-php .list-wrap {
@@ -517,11 +513,11 @@ ul.add-menu-item-tabs li {
 }
 
 /* Sortables */
-li.menu-item.ui-sortable-helper .menu-item-bar {
+li.menu-item.ui-sortable-helper dl {
 	margin-top: 0;
 }
 
-li.menu-item.ui-sortable-helper .menu-item-transport .menu-item-bar {
+li.menu-item.ui-sortable-helper .menu-item-transport dl {
 	margin-top: 13px;
 }
 
@@ -529,11 +525,6 @@ li.menu-item.ui-sortable-helper .menu-item-transport .menu-item-bar {
 	height: 35px;
 	width: 410px;
 	margin-top: 13px;
-}
-
-/* Hide the transport list when it's empty */
-.menu-item .menu-item-transport:empty {
-	display: none;
 }
 
 /* WARNING: The factor of 30px is hardcoded into the nav-menus JavaScript. */
@@ -578,11 +569,11 @@ body.menu-max-depth-11 { min-width: 1280px !important; }
 
 /* Menu item controls */
 .item-type {
-	display: inline-block;
-	padding: 12px 10px;
-	color: #666;
+	color: #777;
 	font-size: 12px;
+	padding: 12px 10px;
 	line-height: 18px;
+	display: block;
 }
 
 .item-controls {
@@ -680,6 +671,7 @@ body.menu-max-depth-11 { min-width: 1280px !important; }
 
 .description-thin {
 	width: 190px;
+	height: 40px;
 }
 
 .description-wide {
@@ -717,14 +709,14 @@ body.menu-max-depth-11 { min-width: 1280px !important; }
 }
 
 .nav-menus-php .submitbox .submitcancel {
-	border-bottom: 1px solid #0073aa;
+	border-bottom: 1px solid #0074a2;
 	padding: 1px 2px;
-	color: #0073aa;
+	color: #0074a2;
 	text-decoration: none;
 }
 
 .nav-menus-php .submitbox .submitcancel:hover {
-	background: #0073aa;
+	background: #0074a2;
 	color: #fff;
 }
 
@@ -833,15 +825,11 @@ body.menu-max-depth-11 { min-width: 1280px !important; }
 	.menu-item-settings .description-thin,
 	.menu-item-settings .description-wide {
 		width: 100%;
+		height: auto;
 	}
 
 	.menu-item-settings input {
 		width: 100%;
-	}
-
-	.menu-item-settings input[type="checkbox"],
-	.menu-item-settings input[type="radio"] {
-		width: 25px;
 	}
 
 	.menu-settings dl {

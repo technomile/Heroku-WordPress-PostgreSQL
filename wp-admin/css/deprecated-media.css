@@ -9,50 +9,13 @@ div#media-upload-header {
 	background: #f9f9f9;
 }
 
-#sidemenu {
-	overflow: hidden;
-	float: none;
-	position: relative;
+body#media-upload ul#sidemenu {
+	font-weight: normal;
+	margin: 0 5px;
 	left: 0;
 	bottom: -1px;
-	margin: 0 5px;
-	padding-left: 10px;
-	list-style: none;
-	font-size: 12px;
-	font-weight: normal;
-}
-
-#sidemenu a {
-	padding: 0 7px;
-	display: block;
-	float: left;
-	line-height: 28px;
-	border-top: 1px solid #f9f9f9;
-	border-bottom: 1px solid #dfdfdf;
-	background-color: #f9f9f9;
-	text-decoration: none;
-	-webkit-transition: none;
-	transition: none;
-}
-
-#sidemenu li {
-	display: inline;
-	line-height: 200%;
-	list-style: none;
-	text-align: center;
-	white-space: nowrap;
-	margin: 0;
-	padding: 0;
-}
-
-#sidemenu a.current {
-	font-weight: normal;
-	padding-left: 6px;
-	padding-right: 6px;
-	border: 1px solid #dfdfdf;
-	border-bottom-color: #f1f1f1;
-	background-color: #f1f1f1;
-	color: #000;
+	float: none;
+	overflow: hidden;
 }
 
 #media-upload:after { /* clearfix */
@@ -229,7 +192,7 @@ abbr.required {
 
 .ui-sortable-helper {
 	background-color: #fff;
-	border: 1px solid #a0a5aa;
+	border: 1px solid #aaa;
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 }
@@ -378,6 +341,7 @@ table.not-image tr.image-only {
  * HiDPI Displays
  */
 @media print,
+  (-o-min-device-pixel-ratio: 5/4),
   (-webkit-min-device-pixel-ratio: 1.25),
   (min-resolution: 120dpi) {
 
