@@ -17,8 +17,9 @@ class WP_Locale {
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $weekday;
+	var $weekday;
 
 	/**
 	 * Stores the translated strings for the one character weekday names.
@@ -30,32 +31,36 @@ class WP_Locale {
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $weekday_initial;
+	var $weekday_initial;
 
 	/**
 	 * Stores the translated strings for the abbreviated weekday names.
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $weekday_abbrev;
+	var $weekday_abbrev;
 
 	/**
 	 * Stores the translated strings for the full month names.
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $month;
+	var $month;
 
 	/**
 	 * Stores the translated strings for the abbreviated month names.
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $month_abbrev;
+	var $month_abbrev;
 
 	/**
 	 * Stores the translated strings for 'am' and 'pm'.
@@ -64,8 +69,9 @@ class WP_Locale {
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $meridiem;
+	var $meridiem;
 
 	/**
 	 * The text direction of the locale language.
@@ -74,14 +80,15 @@ class WP_Locale {
 	 *
 	 * @since 2.1.0
 	 * @var string
+	 * @access private
 	 */
-	public $text_direction = 'ltr';
+	var $text_direction = 'ltr';
 
 	/**
 	 * @var array
 	 */
-	public $number_format;
-
+	var $number_format;
+	
 	/**
 	 * Sets up the translated strings and object properties.
 	 *
@@ -91,11 +98,8 @@ class WP_Locale {
 	 *
 	 * @since 2.1.0
 	 * @access private
-	 *
-	 * @global string $text_direction
-	 * @global string $wp_version
 	 */
-	public function init() {
+	function init() {
 		// The Weekdays
 		$this->weekday[0] = /* translators: weekday */ __('Sunday');
 		$this->weekday[1] = /* translators: weekday */ __('Monday');
@@ -191,12 +195,8 @@ class WP_Locale {
 		}
 	}
 
-	/**
-	 * @since 3.8.0
-	 */
-	public function rtl_src_admin_notice() {
-		/* translators: %s: Name of the directory (build) */
-		echo '<div class="error"><p>' . sprintf( __( 'The %s directory of the develop repository must be used for RTL.' ), '<code>build</code>' ) . '</p></div>';
+	function rtl_src_admin_notice() {
+		echo '<div class="error"><p>' . 'The <code>build</code> directory of the develop repository must be used for RTL.' . '</p></div>';
 	}
 
 	/**
@@ -212,7 +212,7 @@ class WP_Locale {
 	 * @param int $weekday_number 0 for Sunday through 6 Saturday
 	 * @return string Full translated weekday
 	 */
-	public function get_weekday($weekday_number) {
+	function get_weekday($weekday_number) {
 		return $this->weekday[$weekday_number];
 	}
 
@@ -230,7 +230,7 @@ class WP_Locale {
 	 * @param string $weekday_name
 	 * @return string
 	 */
-	public function get_weekday_initial($weekday_name) {
+	function get_weekday_initial($weekday_name) {
 		return $this->weekday_initial[$weekday_name];
 	}
 
@@ -246,7 +246,7 @@ class WP_Locale {
 	 * @param string $weekday_name Full translated weekday word
 	 * @return string Translated weekday abbreviation
 	 */
-	public function get_weekday_abbrev($weekday_name) {
+	function get_weekday_abbrev($weekday_name) {
 		return $this->weekday_abbrev[$weekday_name];
 	}
 
@@ -267,7 +267,7 @@ class WP_Locale {
 	 * @param string|int $month_number '01' through '12'
 	 * @return string Translated full month name
 	 */
-	public function get_month($month_number) {
+	function get_month($month_number) {
 		return $this->month[zeroise($month_number, 2)];
 	}
 
@@ -283,7 +283,7 @@ class WP_Locale {
 	 * @param string $month_name Translated month to get abbreviated version
 	 * @return string Translated abbreviated month
 	 */
-	public function get_month_abbrev($month_name) {
+	function get_month_abbrev($month_name) {
 		return $this->month_abbrev[$month_name];
 	}
 
@@ -298,7 +298,7 @@ class WP_Locale {
 	 * @param string $meridiem Either 'am', 'pm', 'AM', or 'PM'. Not translated version.
 	 * @return string Translated version
 	 */
-	public function get_meridiem($meridiem) {
+	function get_meridiem($meridiem) {
 		return $this->meridiem[$meridiem];
 	}
 
@@ -308,15 +308,9 @@ class WP_Locale {
 	 * @deprecated For backwards compatibility only.
 	 * @access private
 	 *
-	 * @global array $weekday
-	 * @global array $weekday_initial
-	 * @global array $weekday_abbrev
-	 * @global array $month
-	 * @global array $month_abbrev
-	 *
 	 * @since 2.1.0
 	 */
-	public function register_globals() {
+	function register_globals() {
 		$GLOBALS['weekday']         = $this->weekday;
 		$GLOBALS['weekday_initial'] = $this->weekday_initial;
 		$GLOBALS['weekday_abbrev']  = $this->weekday_abbrev;
@@ -327,9 +321,13 @@ class WP_Locale {
 	/**
 	 * Constructor which calls helper methods to set up object variables
 	 *
+	 * @uses WP_Locale::init()
+	 * @uses WP_Locale::register_globals()
 	 * @since 2.1.0
+	 *
+	 * @return WP_Locale
 	 */
-	public function __construct() {
+	function __construct() {
 		$this->init();
 		$this->register_globals();
 	}
@@ -340,7 +338,7 @@ class WP_Locale {
 	 * @since 3.0.0
 	 * @return bool Whether locale is RTL.
 	 */
-	public function is_rtl() {
+	function is_rtl() {
 		return 'rtl' == $this->text_direction;
 	}
 
@@ -353,7 +351,7 @@ class WP_Locale {
 	 *
 	 * @since 3.6.0
 	 */
-	public function _strings_for_pot() {
+	function _strings_for_pot() {
 		/* translators: localized date format, see http://php.net/date */
 		__( 'F j, Y' );
 		/* translators: localized time format, see http://php.net/date */
@@ -367,9 +365,6 @@ class WP_Locale {
  * Checks if current locale is RTL.
  *
  * @since 3.0.0
- *
- * @global WP_Locale $wp_locale
- *
  * @return bool Whether locale is RTL.
  */
 function is_rtl() {

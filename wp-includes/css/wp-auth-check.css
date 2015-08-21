@@ -28,18 +28,10 @@
 	width: 380px;
 	margin: 0 0 0 -190px;
 	padding: 30px 0 0;
-	background-color: #f1f1f1;
+	background-color: #eee;
 	z-index: 1000011; /* needs to appear above #wp-auth-check-bg */
 	-webkit-box-shadow: 0 3px 6px rgba( 0, 0, 0, 0.3 );
 	box-shadow: 0 3px 6px rgba( 0, 0, 0, 0.3 );
-}
-
-@media screen and ( max-width: 380px ) {
-	#wp-auth-check-wrap #wp-auth-check {
-		left: 0;
-		width: 100%;
-		margin: 0;
-	}
 }
 
 #wp-auth-check-wrap.fallback #wp-auth-check {
@@ -48,17 +40,16 @@
 }
 
 #wp-auth-check-wrap #wp-auth-check-form {
-	background: url(../images/spinner-2x.gif) no-repeat center center;
+	background: url(../images/wpspin-2x.gif) no-repeat center center;
 	-webkit-background-size: 16px 16px;
 	background-size: 16px 16px;
 	height: 100%;
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
 }
 
 #wp-auth-check-wrap #wp-auth-check-form iframe {
-	height: 98%; /* Scrollbar fix */
+	height: 100%;
 	width: 100%;
+	overflow: auto;
 }
 
 #wp-auth-check-wrap .wp-auth-check-close {
@@ -85,11 +76,11 @@
 }
 
 #wp-auth-check-wrap .wp-auth-check-close:hover:before {
-	color: #0073aa;
+	color: #0074a2;
 }
 
 #wp-auth-check-wrap .wp-auth-check-close:focus {
-	outline: 1px dotted #82878c;
+	outline: 1px dotted #888;
 }
 
 #wp-auth-check-wrap .wp-auth-fallback-expired {

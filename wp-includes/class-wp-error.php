@@ -24,16 +24,18 @@ class WP_Error {
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $errors = array();
+	private $errors = array();
 
 	/**
 	 * Stores the list of data for error codes.
 	 *
 	 * @since 2.1.0
 	 * @var array
+	 * @access private
 	 */
-	public $error_data = array();
+	private $error_data = array();
 
 	/**
 	 * Initialize the error.
@@ -51,6 +53,7 @@ class WP_Error {
 	 * @param string|int $code Error code
 	 * @param string $message Error message
 	 * @param mixed $data Optional. Error data.
+	 * @return WP_Error
 	 */
 	public function __construct( $code = '', $message = '', $data = '' ) {
 		if ( empty($code) )
@@ -60,6 +63,58 @@ class WP_Error {
 
 		if ( ! empty($data) )
 			$this->error_data[$code] = $data;
+	}
+
+	/**
+	 * Make private properties readable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to get.
+	 * @return mixed Property.
+	 */
+	public function __get( $name ) {
+		return $this->$name;
+	}
+
+	/**
+	 * Make private properties settable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name  Property to set.
+	 * @param mixed  $value Property value.
+	 * @return mixed Newly-set property.
+	 */
+	public function __set( $name, $value ) {
+		return $this->$name = $value;
+	}
+
+	/**
+	 * Make private properties checkable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to check if set.
+	 * @return bool Whether the property is set.
+	 */
+	public function __isset( $name ) {
+		return isset( $this->$name );
+	}
+
+	/**
+	 * Make private properties un-settable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to unset.
+	 */
+	public function __unset( $name ) {
+		unset( $this->$name );
 	}
 
 	/**
@@ -144,7 +199,7 @@ class WP_Error {
 	 * @since 2.1.0
 	 *
 	 * @param string|int $code Optional. Error code.
-	 * @return mixed Error data, if it exists.
+	 * @return mixed Null, if no errors.
 	 */
 	public function get_error_data($code = '') {
 		if ( empty($code) )
@@ -152,6 +207,7 @@ class WP_Error {
 
 		if ( isset($this->error_data[$code]) )
 			return $this->error_data[$code];
+		return null;
 	}
 
 	/**
@@ -213,6 +269,8 @@ class WP_Error {
  * @param mixed $thing Check if unknown variable is a WP_Error object.
  * @return bool True, if WP_Error. False, if not WP_Error.
  */
-function is_wp_error( $thing ) {
-	return ( $thing instanceof WP_Error );
+function is_wp_error($thing) {
+	if ( is_object($thing) && is_a($thing, 'WP_Error') )
+		return true;
+	return false;
 }

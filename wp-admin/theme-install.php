@@ -44,15 +44,11 @@ wp_localize_script( 'theme', '_wpThemeSettings', array(
 	),
 	'l10n' => array(
 		'addNew' => __( 'Add New Theme' ),
-		'search' => __( 'Search Themes' ),
+		'search'  => __( 'Search Themes' ),
 		'searchPlaceholder' => __( 'Search themes...' ), // placeholder (no ellipsis)
 		'upload' => __( 'Upload Theme' ),
 		'back'   => __( 'Back' ),
-		'error'  => __( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/">support forums</a>.' ),
-		'themesFound'   => __( 'Number of Themes found: %d' ),
-		'noThemesFound' => __( 'No themes found. Try a different search.' ),
-		'collapseSidebar'    => __( 'Collapse Sidebar' ),
-		'expandSidebar'      => __( 'Expand Sidebar' ),
+		'error'  => __( 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/">support forums</a>.' )
 	),
 	'installedThemes' => array_keys( $installed_themes ),
 ) );
@@ -74,8 +70,7 @@ if ( $tab ) {
 
 $help_overview =
 	'<p>' . sprintf(__('You can find additional themes for your site by using the Theme Browser/Installer on this screen, which will display themes from the <a href="%s" target="_blank">WordPress.org Theme Directory</a>. These themes are designed and developed by third parties, are available free of charge, and are compatible with the license WordPress uses.'), 'https://wordpress.org/themes/') . '</p>' .
-	'<p>' . __( 'You can Search for themes by keyword, author, or tag, or can get more specific and search by criteria listed in the feature filter.' ) . ' <span id="live-search-desc">' . __( 'The search results will be updated as you type.' ) . '</span></p>' .
-	'<p>' . __( 'Alternately, you can browse the themes that are Featured, Popular, or Latest. When you find a theme you like, you can preview it or install it.' ) . '</p>' .
+	'<p>' . __('You can Search for themes by keyword, author, or tag, or can get more specific and search by criteria listed in the feature filter. Alternately, you can browse the themes that are Featured, Popular, or Latest. When you find a theme you like, you can preview it or install it.') . '</p>' .
 	'<p>' . __('You can Upload a theme manually if you have already downloaded its ZIP archive onto your computer (make sure it is from a trusted and original source). You can also do it the old-fashioned way and copy a downloaded theme&#8217;s folder via FTP into your <code>/wp-content/themes</code> directory.') . '</p>';
 
 get_current_screen()->add_help_tab( array(
@@ -96,7 +91,7 @@ get_current_screen()->add_help_tab( array(
 
 get_current_screen()->set_help_sidebar(
 	'<p><strong>' . __('For more information:') . '</strong></p>' .
-	'<p>' . __('<a href="https://codex.wordpress.org/Using_Themes#Adding_New_Themes" target="_blank">Documentation on Adding New Themes</a>') . '</p>' .
+	'<p>' . __('<a href="http://codex.wordpress.org/Using_Themes#Adding_New_Themes" target="_blank">Documentation on Adding New Themes</a>') . '</p>' .
 	'<p>' . __('<a href="https://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>'
 );
 
@@ -104,7 +99,7 @@ include(ABSPATH . 'wp-admin/admin-header.php');
 
 ?>
 <div class="wrap">
-	<h1><?php
+	<h2><?php
 	echo esc_html( $title );
 
 	/**
@@ -119,10 +114,10 @@ include(ABSPATH . 'wp-admin/admin-header.php');
 	 */
 	$tabs = apply_filters( 'install_themes_tabs', array( 'upload' => __( 'Upload Theme' ) ) );
 	if ( ! empty( $tabs['upload'] ) && current_user_can( 'upload_themes' ) ) {
-		echo ' <a href="#" class="upload page-title-action">' . __( 'Upload Theme' ) . '</a>';
-		echo ' <a href="#" class="browse-themes page-title-action">' . _x( 'Browse', 'themes' ) . '</a>';
+		echo ' <a href="#" class="upload add-new-h2">' . __( 'Upload Theme' ) . '</a>';
+		echo ' <a href="#" class="browse-themes add-new-h2">' . _x( 'Browse', 'themes' ) . '</a>';
 	}
-	?></h1>
+	?></h2>
 
 	<div class="upload-theme">
 	<?php install_themes_upload(); ?>
@@ -238,30 +233,32 @@ if ( $tab ) {
 				<img class="theme-screenshot" src="{{ data.screenshot_url }}" alt="" />
 
 				<div class="theme-details">
-					<# if ( data.rating ) { #>
-						<div class="star-rating rating-{{ Math.round( data.rating / 10 ) * 10 }}">
-							<span class="one"></span><span class="two"></span><span class="three"></span><span class="four"></span><span class="five"></span>
-							<small class="ratings">{{ data.num_ratings }}</small>
-						</div>
+					<div class="rating rating-{{ Math.round( data.rating / 10 ) * 10 }}">
+						<span class="one"></span>
+						<span class="two"></span>
+						<span class="three"></span>
+						<span class="four"></span>
+						<span class="five"></span>
+					<# if ( data.num_ratings ) { #>
+						<small class="ratings">{{ data.num_ratings }}</small>
 					<# } else { #>
-						<div class="star-rating">
-							<small class="ratings"><?php _e( 'This theme has not been rated yet.' ); ?></small>
-						</div>
+						<small class="ratings"><?php _e( 'No ratings.' ); ?></small>
 					<# } #>
+					</div>
 					<div class="theme-version"><?php printf( __( 'Version: %s' ), '{{ data.version }}' ); ?></div>
 					<div class="theme-description">{{{ data.description }}}</div>
 				</div>
 			</div>
 		</div>
 		<div class="wp-full-overlay-footer">
-			<button type="button" class="collapse-sidebar button-secondary" aria-expanded="true" aria-label="<?php esc_attr_e( 'Collapse Sidebar' ); ?>">
-				<span class="collapse-sidebar-arrow"></span>
+			<a href="#" class="collapse-sidebar" title="<?php esc_attr_e( 'Collapse Sidebar' ); ?>">
 				<span class="collapse-sidebar-label"><?php _e( 'Collapse' ); ?></span>
-			</button>
+				<span class="collapse-sidebar-arrow"></span>
+			</a>
 		</div>
 	</div>
 	<div class="wp-full-overlay-main">
-		<iframe src="{{ data.preview_url }}" title="<?php esc_attr_e( 'Preview' ); ?>" />
+		<iframe src="{{ data.preview_url }}" />
 	</div>
 </script>
 

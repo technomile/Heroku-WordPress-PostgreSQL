@@ -40,7 +40,7 @@ class Translation_Entry {
 	 * 	- references (array) -- places in the code this strings is used, in relative_to_root_path/file.php:linenum form
 	 * 	- flags (array) -- flags like php-format
 	 */
-	function __construct( $args = array() ) {
+	function Translation_Entry($args=array()) {
 		// if no singular -- empty object
 		if (!isset($args['singular'])) {
 			return;
@@ -56,13 +56,6 @@ class Translation_Entry {
 	}
 
 	/**
-	 * PHP4 constructor.
-	 */
-	public function Translation_Entry( $args = array() ) {
-		self::__construct( $args );
-	}
-
-	/**
 	 * Generates a unique key for this entry
 	 *
 	 * @return string|bool the key or false if the entry is empty
@@ -73,9 +66,6 @@ class Translation_Entry {
 		return is_null($this->context)? $this->singular : $this->context.chr(4).$this->singular;
 	}
 
-	/**
-	 * @param object $other
-	 */
 	function merge_with(&$other) {
 		$this->flags = array_unique( array_merge( $this->flags, $other->flags ) );
 		$this->references = array_unique( array_merge( $this->references, $other->references ) );

@@ -27,12 +27,12 @@
  */
 class ftp extends ftp_base {
 
-	function __construct($verb=FALSE, $le=FALSE) {
-		parent::__construct(false, $verb, $le);
-	}
-
 	function ftp($verb=FALSE, $le=FALSE) {
 		$this->__construct($verb, $le);
+	}
+
+	function __construct($verb=FALSE, $le=FALSE) {
+		parent::__construct(false, $verb, $le);
 	}
 
 // <!-- --------------------------------------------------------------------------------------- -->

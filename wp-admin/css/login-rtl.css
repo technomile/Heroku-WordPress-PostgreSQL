@@ -22,7 +22,7 @@ body {
 }
 
 a {
-	color: #0073aa;
+	color: #0074a2;
 	-webkit-transition-property: border, background, color;
 	transition-property: border, background, color;
 	-webkit-transition-duration: .05s;
@@ -37,21 +37,16 @@ a {
 
 a:hover,
 a:active {
-	color: #00a0d2;
+	color: #2ea2cc;
 }
 
 a:focus {
 	color: #124964;
-	-webkit-box-shadow:
-		0 0 0 1px #5b9dd9,
-		0 0 2px 1px rgba(30, 140, 190, .8);
-	box-shadow:
-		0 0 0 1px #5b9dd9,
-		0 0 2px 1px rgba(30, 140, 190, .8);
 }
 
-.ie8 a:focus {
-	outline: #5b9dd9 solid 1px;
+a:focus,
+a:active {
+	outline: thin dotted;
 }
 
 p {
@@ -59,7 +54,7 @@ p {
 }
 
 .login .message {
-	border-right: 4px solid #00a0d2;
+	border-right: 4px solid #2ea2cc;
 	padding: 1px 12px;
 	background-color: #fff;
 	-webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
@@ -185,13 +180,7 @@ p {
 .login #nav a:hover,
 .login #backtoblog a:hover,
 .login h1 a:hover {
-	color: #00a0d2;
-}
-
-.login #nav a:focus,
-.login #backtoblog a:focus,
-.login h1 a:focus {
-	color: #124964;
+	color: #2ea2cc;
 }
 
 .login form .input,
@@ -213,18 +202,12 @@ p {
 	font-family: sans-serif;
 }
 
-.login-action-rp input[type="text"] {
-	-webkit-box-shadow: none;
-	box-shadow: none;
-	margin: 0;
-}
-
 .login #pass-strength-result {
+	width: 250px;
 	font-weight: 600;
-	margin: -1px 0 16px 5px;
+	margin: 12px 0 6px;
 	padding: 6px 5px;
 	text-align: center;
-	width: 100%;
 }
 
 .mobile #login {
@@ -240,6 +223,10 @@ p {
 .mobile #login #nav,
 .mobile #login #backtoblog {
 	margin-right: 8px;
+}
+
+.mobile #login h1 a {
+	width: auto;
 }
 
 body.interim-login {
