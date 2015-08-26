@@ -557,3 +557,8 @@ global $wp_version;return(object) array('last_checked'=> time(),'version_checked
 add_filter('pre_site_transient_update_core','remove_core_updates');
 add_filter('pre_site_transient_update_plugins','remove_core_updates');
 add_filter('pre_site_transient_update_themes','remove_core_updates');
+
+add_action( 'admin_init', 'wpse_38111' );
+function wpse_38111() {
+    remove_submenu_page( 'index.php', 'update-core.php' );
+}
