@@ -18,6 +18,14 @@
  * @package WordPress
  */
 
+// Sendgrid settings - Read in the sendgrid auth from the config //
+define('SENDGRID_USERNAME', $_ENV["SENDGRID_USERNAME"]);
+define('SENDGRID_PASSWORD', $_ENV["SENDGRID_PASSWORD"]); 
+  
+// S3 Config Info - read the S3 Access Keys from the config //
+define( 'AWS_ACCESS_KEY_ID', $_ENV["AWS_ACCESS_KEY_ID"]);
+define( 'AWS_SECRET_ACCESS_KEY', $_ENV["AWS_SECRET_ACCESS_KEY"]);  
+
 // ** Heroku Postgres settings - from Heroku Environment ** //
 $db = parse_url($_ENV["DATABASE_URL"]);
 
@@ -49,14 +57,14 @@ define('DB_COLLATE', '');
  *
  * @since 2.6.0
  */
-define('AUTH_KEY',         'uNc(xX;210M*`0`t+ A MIji2yoXRJhcL6{uA+R+O2kJLyX$S|^#we@:d!2XpUli');
-define('SECURE_AUTH_KEY',  '+U*ERWmh_pb^D}rAH~x||4)?YC$`=P@0T (iT`{l-ks1[3iHM3(*==+>hG8?YE84');
-define('LOGGED_IN_KEY',    'tClmbL?TQQlg7uio:`is;XDn*-NO=afCu&pBD/ZR,]<9Tv|8GByl`vu+EH(V|Am]');
-define('NONCE_KEY',        '+!gPSi_|H6-7Y-+.Nk|;mHt|8K@o6-79Iv&Av75e554y:}o-`Gi{:3^H3TxRGY52');
-define('AUTH_SALT',        'Ni70%^eJy[E#HKW+#|%hufyBoK&S#Jn,-s3RDu2X1n}Le}>ay:S*:+=Q++z<}L%S');
-define('SECURE_AUTH_SALT', 'O-4I#*?$QihDJ4l]7-;y2L`)Hzjt*X0+cQ%13n*0PuRoT$/%gt6JR>tUZb0ak-OZ');
-define('LOGGED_IN_SALT',   'TPs3BsMWO=799:(+(?o3TH+%kp7Hu5wzgD2uDlo}hCyic[$NmV}}fefVUk[ZHGBd');
-define('NONCE_SALT',       '+ngL<O+P b,TvPRGbl(]=CoVOnXjo+m057.uF]W|%/T{e]7VftDtb q8FmTan?W-');
+define('AUTH_KEY',         $_ENV["AUTH_KEY"]);
+define('SECURE_AUTH_KEY',  $_ENV["SECURE_AUTH_KEY"]);
+define('LOGGED_IN_KEY',    $_ENV["LOGGED_IN_KEY"]);
+define('NONCE_KEY',        $_ENV["NONCE_KEY"]);
+define('AUTH_SALT',        $_ENV["AUTH_SALT"]);
+define('SECURE_AUTH_SALT', $_ENV["SECURE_AUTH_SALT"]);
+define('LOGGED_IN_SALT',   $_ENV["LOGGED_IN_SALT"]);
+define('NONCE_SALT',       $_ENV["NONCE_SALT"]);
 
 /**#@-*/
 
