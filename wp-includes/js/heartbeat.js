@@ -131,7 +131,7 @@
 				// Needed for some hosts that cannot handle frequent requests and the user may exceed the allocated server CPU time, etc.
 				// The minimal interval can be up to 600 sec. however setting it to longer than 120 sec. will limit or disable
 				// some of the functionality (like post locks).
-				// Once set at initialization, minimalInterval cannot be changed/overriden.
+				// Once set at initialization, minimalInterval cannot be changed/overridden.
 				if ( options.minimalInterval ) {
 					options.minimalInterval = parseInt( options.minimalInterval, 10 );
 					settings.minimalInterval = options.minimalInterval > 0 && options.minimalInterval <= 600 ? options.minimalInterval * 1000 : 0;
@@ -141,7 +141,7 @@
 					settings.mainInterval = settings.minimalInterval;
 				}
 
-				// 'screenId' can be added from settings on the front-end where the JS global 'pagenow' is not set
+				// 'screenId' can be added from settings on the front end where the JS global 'pagenow' is not set
 				if ( ! settings.screenId ) {
 					settings.screenId = options.screenId || 'front';
 				}
@@ -367,6 +367,10 @@
 				has_focus: settings.hasFocus
 			};
 
+			if ( 'customize' === settings.screenId  ) {
+				ajaxData.wp_customize = 'on';
+			}
+
 			settings.connecting = true;
 			settings.xhr = $.ajax({
 				url: settings.url,
@@ -389,7 +393,6 @@
 
 				if ( response.nonces_expired ) {
 					$document.trigger( 'heartbeat-nonces-expired' );
-					return;
 				}
 
 				// Change the interval from PHP
@@ -743,7 +746,11 @@
 		};
 	};
 
-	// Ensure the global `wp` object exists.
+	/**
+	 * Ensure the global `wp` object exists.
+	 *
+	 * @namespace wp
+	 */
 	window.wp = window.wp || {};
 	window.wp.heartbeat = new Heartbeat();
 
