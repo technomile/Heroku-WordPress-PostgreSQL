@@ -55,11 +55,11 @@ function twentyfifteen_setup() {
 
 	/*
 	 * Make theme available for translation.
-	 * Translations can be filed in the /languages/ directory.
+	 * Translations can be filed at WordPress.org. See: https://translate.wordpress.org/projects/wp-themes/twentyfifteen
 	 * If you're building a theme based on twentyfifteen, use a find and replace
 	 * to change 'twentyfifteen' to the name of your theme in all the template files
 	 */
-	load_theme_textdomain( 'twentyfifteen', get_template_directory() . '/languages' );
+	load_theme_textdomain( 'twentyfifteen' );
 
 	// Add default posts and comments RSS feed links to head.
 	add_theme_support( 'automatic-feed-links' );
@@ -103,10 +103,34 @@ function twentyfifteen_setup() {
 		'aside', 'image', 'video', 'quote', 'link', 'gallery', 'status', 'audio', 'chat'
 	) );
 
+	/*
+	 * Enable support for custom logo.
+	 *
+	 * @since Twenty Fifteen 1.5
+	 */
+	add_theme_support( 'custom-logo', array(
+		'height'      => 248,
+		'width'       => 248,
+		'flex-height' => true,
+	) );
+
 	$color_scheme  = twentyfifteen_get_color_scheme();
 	$default_color = trim( $color_scheme[0], '#' );
 
 	// Setup the WordPress core custom background feature.
+
+	/**
+	 * Filter Twenty Fifteen custom-header support arguments.
+	 *
+	 * @since Twenty Fifteen 1.0
+	 *
+	 * @param array $args {
+	 *     An array of custom-header support arguments.
+	 *
+	 *     @type string $default-color     		Default color of the header.
+	 *     @type string $default-attachment     Default attachment of the header.
+	 * }
+	 */
 	add_theme_support( 'custom-background', apply_filters( 'twentyfifteen_custom_background_args', array(
 		'default-color'      => $default_color,
 		'default-attachment' => 'fixed',
@@ -117,6 +141,9 @@ function twentyfifteen_setup() {
 	 * specifically font, colors, icons, and column width.
 	 */
 	add_editor_style( array( 'css/editor-style.css', 'genericons/genericons.css', twentyfifteen_fonts_url() ) );
+
+	// Indicate widget sidebars can use selective refresh in the Customizer.
+	add_theme_support( 'customize-selective-refresh-widgets' );
 }
 endif; // twentyfifteen_setup
 add_action( 'after_setup_theme', 'twentyfifteen_setup' );
@@ -259,6 +286,31 @@ function twentyfifteen_scripts() {
 add_action( 'wp_enqueue_scripts', 'twentyfifteen_scripts' );
 
 /**
+ * Add preconnect for Google Fonts.
+ *
+ * @since Twenty Fifteen 1.7
+ *
+ * @param array   $urls          URLs to print for resource hints.
+ * @param string  $relation_type The relation type the URLs are printed.
+ * @return array URLs to print for resource hints.
+ */
+function twentyfifteen_resource_hints( $urls, $relation_type ) {
+	if ( wp_style_is( 'twentyfifteen-fonts', 'queue' ) && 'preconnect' === $relation_type ) {
+		if ( version_compare( $GLOBALS['wp_version'], '4.7-alpha', '>=' ) ) {
+			$urls[] = array(
+				'href' => 'https://fonts.gstatic.com',
+				'crossorigin',
+			);
+		} else {
+			$urls[] = 'https://fonts.gstatic.com';
+		}
+	}
+
+	return $urls;
+}
+add_filter( 'wp_resource_hints', 'twentyfifteen_resource_hints', 10, 2 );
+
+/**
  * Add featured image as background image to post navigation elements.
  *
  * @since Twenty Fifteen 1.0
@@ -334,6 +386,26 @@ function twentyfifteen_search_form_modify( $html ) {
 add_filter( 'get_search_form', 'twentyfifteen_search_form_modify' );
 
 /**
+ * Modifies tag cloud widget arguments to display all tags in the same font size
+ * and use list format for better accessibility.
+ *
+ * @since Twenty Fifteen 1.9
+ *
+ * @param array $args Arguments for tag cloud widget.
+ * @return array The filtered arguments for tag cloud widget.
+ */
+function twentyfifteen_widget_tag_cloud_args( $args ) {
+	$args['largest']  = 22;
+	$args['smallest'] = 8;
+	$args['unit']     = 'pt';
+	$args['format']   = 'list';
+
+	return $args;
+}
+add_filter( 'widget_tag_cloud_args', 'twentyfifteen_widget_tag_cloud_args' );
+
+
+/**
  * Implement the Custom Header feature.
  *
  * @since Twenty Fifteen 1.0
@@ -353,16 +425,3 @@ require get_template_directory() . '/inc/template-tags.php';
  * @since Twenty Fifteen 1.0
  */
 require get_template_directory() . '/inc/customizer.php';
-
-function remove_core_updates(){
-global $wp_version;return(object) array('last_checked'=> time(),'version_checked'=> $wp_version,);
-}
-add_filter('pre_site_transient_update_core','remove_core_updates');
-add_filter('pre_site_transient_update_plugins','remove_core_updates');
-add_filter('pre_site_transient_update_themes','remove_core_updates');
-
-add_action( 'admin_init', 'wpse_38111' );
-function wpse_38111() {
-    remove_submenu_page( 'index.php', 'update-core.php' );
-}
-

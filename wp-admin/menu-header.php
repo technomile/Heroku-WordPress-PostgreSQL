@@ -10,26 +10,42 @@
  * The current page.
  *
  * @global string $self
- * @name $self
- * @var string
  */
 $self = preg_replace('|^.*/wp-admin/network/|i', '', $_SERVER['PHP_SELF']);
 $self = preg_replace('|^.*/wp-admin/|i', '', $self);
 $self = preg_replace('|^.*/plugins/|i', '', $self);
 $self = preg_replace('|^.*/mu-plugins/|i', '', $self);
 
-global $menu, $submenu, $parent_file; //For when admin-header is included from within a function.
+/**
+ * For when admin-header is included from within a function.
+ *
+ * @global array  $menu
+ * @global array  $submenu
+ * @global string $parent_file
+ * @global string $submenu_file
+ */
+global $menu, $submenu, $parent_file, $submenu_file;
 
 /**
- * Filter the parent file of an admin menu sub-menu item.
+ * Filters the parent file of an admin menu sub-menu item.
  *
  * Allows plugins to move sub-menu items around.
  *
- * @since MU
+ * @since MU (3.0.0)
  *
  * @param string $parent_file The parent file.
  */
 $parent_file = apply_filters( 'parent_file', $parent_file );
+
+/**
+ * Filters the file of an admin menu sub-menu item.
+ *
+ * @since 4.4.0
+ *
+ * @param string $submenu_file The submenu file.
+ * @param string $parent_file  The submenu item's parent file.
+ */
+$submenu_file = apply_filters( 'submenu_file', $submenu_file, $parent_file );
 
 get_admin_page_parent();
 
@@ -39,9 +55,15 @@ get_admin_page_parent();
  * @access private
  * @since 2.7.0
  *
+ * @global string $self
+ * @global string $parent_file
+ * @global string $submenu_file
+ * @global string $plugin_page
+ * @global string $typenow
+ *
  * @param array $menu
  * @param array $submenu
- * @param bool $submenu_as_parent
+ * @param bool  $submenu_as_parent
  */
 function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 	global $self, $parent_file, $submenu_file, $plugin_page, $typenow;
@@ -60,14 +82,19 @@ function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 			$first = false;
 		}
 
-		$submenu_items = false;
+		$submenu_items = array();
 		if ( ! empty( $submenu[$item[2]] ) ) {
 			$class[] = 'wp-has-submenu';
 			$submenu_items = $submenu[$item[2]];
 		}
 
 		if ( ( $parent_file && $item[2] == $parent_file ) || ( empty($typenow) && $self == $item[2] ) ) {
-			$class[] = ! empty( $submenu_items ) ? 'wp-has-current-submenu wp-menu-open' : 'current';
+			if ( ! empty( $submenu_items ) ) {
+				$class[] = 'wp-has-current-submenu wp-menu-open';
+			} else {
+				$class[] = 'current';
+				$aria_attributes .= 'aria-current="page"';
+			}
 		} else {
 			$class[] = 'wp-not-current-submenu';
 			if ( ! empty( $submenu_items ) )
@@ -87,7 +114,7 @@ function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 		}
 
 		/*
-		 * If the string 'none' (previously 'div') is passed instead of an URL, don't output
+		 * If the string 'none' (previously 'div') is passed instead of a URL, don't output
 		 * the default menu image so an icon can be added to div.wp-menu-image as background
 		 * with CSS. Dashicons and base64-encoded data:image/svg_xml URIs are also handled
 		 * as special cases.
@@ -146,7 +173,7 @@ function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 
 		if ( ! empty( $submenu_items ) ) {
 			echo "\n\t<ul class='wp-submenu wp-submenu-wrap'>";
-			echo "<li class='wp-submenu-head'>{$item[0]}</li>";
+			echo "<li class='wp-submenu-head' aria-hidden='true'>{$item[0]}</li>";
 
 			$first = true;
 
@@ -156,6 +183,7 @@ function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 					continue;
 
 				$class = array();
+				$aria_attributes = '';
 				if ( $first ) {
 					$class[] = 'wp-first-item';
 					$first = false;
@@ -170,15 +198,18 @@ function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 				$self_type = ! empty( $typenow ) ? $self . '?post_type=' . $typenow : 'nothing';
 
 				if ( isset( $submenu_file ) ) {
-					if ( $submenu_file == $sub_item[2] )
+					if ( $submenu_file == $sub_item[2] ) {
 						$class[] = 'current';
+						$aria_attributes .= ' aria-current="page"';
+					}
 				// If plugin_page is set the parent must either match the current page or not physically exist.
 				// This allows plugin pages with the same hook to exist under different parents.
-				} else if (
+				} elseif (
 					( ! isset( $plugin_page ) && $self == $sub_item[2] ) ||
 					( isset( $plugin_page ) && $plugin_page == $sub_item[2] && ( $item[2] == $self_type || $item[2] == $self || file_exists($menu_file) === false ) )
 				) {
 					$class[] = 'current';
+					$aria_attributes .= ' aria-current="page"';
 				}
 
 				if ( ! empty( $sub_item[4] ) ) {
@@ -202,9 +233,9 @@ function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 						$sub_item_url = add_query_arg( array( 'page' => $sub_item[2] ), 'admin.php' );
 
 					$sub_item_url = esc_url( $sub_item_url );
-					echo "<li$class><a href='$sub_item_url'$class>$title</a></li>";
+					echo "<li$class><a href='$sub_item_url'$class$aria_attributes>$title</a></li>";
 				} else {
-					echo "<li$class><a href='{$sub_item[2]}'$class>$title</a></li>";
+					echo "<li$class><a href='{$sub_item[2]}'$class$aria_attributes>$title</a></li>";
 				}
 			}
 			echo "</ul>";
@@ -212,16 +243,21 @@ function _wp_menu_output( $menu, $submenu, $submenu_as_parent = true ) {
 		echo "</li>";
 	}
 
-	echo '<li id="collapse-menu" class="hide-if-no-js"><div id="collapse-button"><div></div></div>';
-	echo '<span>' . esc_html__( 'Collapse menu' ) . '</span>';
-	echo '</li>';
+	echo '<li id="collapse-menu" class="hide-if-no-js">' .
+		'<button type="button" id="collapse-button" aria-label="' . esc_attr__( 'Collapse Main menu' ) . '" aria-expanded="true">' .
+		'<span class="collapse-button-icon" aria-hidden="true"></span>' .
+		'<span class="collapse-button-label">' . __( 'Collapse menu' ) . '</span>' .
+		'</button></li>';
 }
 
 ?>
 
+<div id="adminmenumain" role="navigation" aria-label="<?php esc_attr_e( 'Main menu' ); ?>">
+<a href="#wpbody-content" class="screen-reader-shortcut"><?php _e( 'Skip to main content' ); ?></a>
+<a href="#wp-toolbar" class="screen-reader-shortcut"><?php _e( 'Skip to toolbar' ); ?></a>
 <div id="adminmenuback"></div>
 <div id="adminmenuwrap">
-<ul id="adminmenu" role="navigation">
+<ul id="adminmenu">
 
 <?php
 
@@ -235,4 +271,5 @@ do_action( 'adminmenu' );
 
 ?>
 </ul>
+</div>
 </div>
